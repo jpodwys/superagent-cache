@@ -1,0 +1,36 @@
+{
+  "name": "superagent-cache",
+  "version": "0.1.0",
+  "description": "Superagent with tiered caching provided by cache-service.",
+  "main": "index.js",
+  "dependencies": {
+    "superagent": "1.1.0",
+    "cache-service": "0.1.0"
+  },
+  "devDependencies": {
+    "mocha": "1.13.0",
+    "expect": "1.6.0",
+    "express": "~3.4.3"
+  },
+  "scripts": {
+    "test": "bin/tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jpodwys/superagent-cache"
+  },
+  "author": "Joe Podwys",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jpodwys/superagent-cache/issues"
+  },
+  "homepage": "https://github.com/jpodwys/superagent-cache",
+  "directories": {
+    "test": "test"
+  },
+  "keywords": [
+    "superagent",
+    "cache",
+    "node"
+  ]
+}

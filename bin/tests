@@ -1,0 +1,3 @@
+#/usr/bin/env bash
+
+node_modules/.bin/mocha test/server/*.js -R spec --globals CookieAccessInfo,Cookie,CookieJar,page,assets,js,css,img$MOCHA_GLOBALS
