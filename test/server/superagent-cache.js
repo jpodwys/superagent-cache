@@ -65,7 +65,7 @@ Custom API items to test:
 describe('Array', function(){
 
   beforeEach(function(){
-    cacheService.flushKeys();
+    superagent.cacheService.flushKeys();
   });
 
   describe('superagentCache API tests', function () {

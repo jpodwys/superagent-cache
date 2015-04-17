@@ -4,7 +4,7 @@ MAKE SURE MY .end() ALLOWS FOR A SINGLE CALLBACK PARAM.
 SHOULD cache-service STORE/RETURN undefined WHEN KEY IS NOT FOUND?
 ********************************************************/
 
-
+var cs = require('cache-service').cacheService;
 
 module.exports = function(superagent, config){
 
@@ -17,11 +17,10 @@ module.exports = function(superagent, config){
     superagent.cacheService = config.cacheService;
   }
   else if(config.cacheServiceConfig && config.cacheModuleConfig){
-    var cs = require('cache-service');
     superagent.cacheService = new cs(config.cacheServiceConfig, config.cacheModuleConfig);
   }
   else{
-    //Throw error
+    superagent.cacheService = new cs();
   }
 
   Request.prototype.doQuery = function(doQuery){
