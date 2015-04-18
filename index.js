@@ -61,61 +61,56 @@ module.exports = function(superagent, config){
   Request.prototype._end = Request.prototype.end;
 
   Request.prototype.end = function(cb){
+    var curProps = props;
+    resetProps();
     if(~supportedMethods.indexOf(this.method)){
       var _this = this;
-      var key = keygen(this);
-
+      var key = keygen(this, curProps);
       if(this.method === 'GET'){
-      	superagent.cacheService.getKey(key, function (err, response){
-	        if(!err && response){
-	        	resetProps();
-	          cb(err, response, key);
-	        }
-	        else{
-	          if(props.doQuery){
-	            _this._end(function (err, response){
-	            	if(!err && response){
-	            		response = gutResponse(response);
-		              if(props.prune){
-		                response = props.prune(response);
-		              }
-		              else if(props.responseProp){
-		                response = response[props.responseProp] || null;
-		              }
-		              if(!isEmpty(response) || props.cacheWhenEmpty){
-		                superagent.cacheService.setKey(key, response, props.expiration, function(){
-		                  resetProps();
-		                  cb(err, response, key);
-		                });
-		              }
-		              else{
-		              	resetProps();
-		                cb(err, response, key);
-		              }
-	            	}
-	            });
-	          }
-	          else{
-	          	resetProps();
-	          	cb(null, null, key);
-	          }
-	        }
-	      });
+        superagent.cacheService.getKey(key, function (err, response){
+          if(!err && response){
+            cb(err, response, key);
+          }
+          else{
+            if(curProps.doQuery){
+              _this._end(function (err, response){
+                if(!err && response){
+                  response = gutResponse(response);
+                  if(curProps.prune){
+                    response = curProps.prune(response);
+                  }
+                  else if(curProps.responseProp){
+                    response = response[curProps.responseProp] || null;
+                  }
+                  if(!isEmpty(response) || curProps.cacheWhenEmpty){
+                    superagent.cacheService.setKey(key, response, curProps.expiration, function(){
+                      cb(err, response, key);
+                    });
+                  }
+                  else{
+                    cb(err, response, key);
+                  }
+                }
+              });
+            }
+            else{
+              cb(null, null, key);
+            }
+          }
+        });
       }
       else{
-      	this._end(function (err, response){
-      		resetProps();
-      		if(!err && response){
-      			resetProps();
-      			cb(err, response, key);
-      			superagent.cacheService.deleteKeys(key, noop);
-      		}
-      	});
+        this._end(function (err, response){
+          if(!err && response){
+            superagent.cacheService.deleteKeys(key, function (){
+              cb(err, response, key);  
+            });
+          }
+        });
       }
     }
     else{
       this._end(function (err, response){
-        resetProps();
         cb(err, response, undefined);
       });
     }
@@ -125,32 +120,64 @@ module.exports = function(superagent, config){
     this.req = null;
   }
 
-  function keygen(req){
+  function keygen(req, cProps){
     var cleanParams = null;
     var cleanOptions = null;
+    var params = req.qs || arrayToObj(req.qsRaw) || stringToObj(req.req.path);
     var options = (req.req && req.req._headers) ? req.req._headers : {};
-    if(props.pruneParams || props.pruneOptions){
-      cleanParams = (props.pruneParams) ? pruneObj(cloneObject(req.qs), props.pruneParams) : req.qs;
-      cleanOptions = (props.pruneOptions) ? pruneObj(cloneObject(options), props.pruneOptions, true) : options;
+    if(cProps.pruneParams || cProps.pruneOptions){
+      cleanParams = (cProps.pruneParams) ? pruneObj(cloneObject(params), cProps.pruneParams) : params;
+      cleanOptions = (cProps.pruneOptions) ? pruneObj(cloneObject(options), cProps.pruneOptions, true) : options;
     }
     return JSON.stringify({
       nameSpace: superagent.cacheService.nameSpace,
-      method: req.method,
       uri: req.url,
-      params: cleanParams || req.qs,
-      options: cleanOptions || options,
+      params: cleanParams || params || {},
+      options: cleanOptions || options || {}
     });
   }
 
+  function arrayToObj(arr){
+    if(arr){
+      var obj = {};
+      for(var i = 0; i < arr.length; i++){
+        var kvArray = str.split('&');
+        for(var j = 0; j < kvArray.length; j++){
+          var kvString = kvArray[j].split('=');
+          obj[kvString[0]] = kvString[1];
+        }
+      }
+      return obj;
+    }
+    return null;
+  }
+
+  function stringToObj(str){
+    if(str){
+      var obj = {};
+      if(~str.indexOf('?')){
+        var strs = str.split('?');
+        str = strs[1];
+      }
+      var kvArray = str.split('&');
+      for(var i = 0; i < kvArray.length; i++){
+        var kvString = kvArray[i].split('=');
+        obj[kvString[0]] = kvString[1];
+      }
+      return obj;
+    }
+    return null;
+  }
+
   function pruneObj(obj, props, isOptions){
-  	for(var i = 0; i < props.length; i++){
-  		var prop = props[i];
-  		if(isOptions){
-  			prop = prop.toLowerCase();
-  		}
-  		delete obj[prop]
-  	}
-  	return obj;
+    for(var i = 0; i < props.length; i++){
+      var prop = props[i];
+      if(isOptions){
+        prop = prop.toLowerCase();
+      }
+      delete obj[prop]
+    }
+    return obj;
   }
 
   function gutResponse(r){
