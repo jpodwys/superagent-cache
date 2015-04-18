@@ -1,6 +1,5 @@
 /********************************************************
 MAKE SURE MY .end() ALLOWS FOR A SINGLE CALLBACK PARAM.
-
 SHOULD cache-service STORE/RETURN undefined WHEN KEY IS NOT FOUND?
 ********************************************************/
 
