@@ -48,6 +48,14 @@ npm test
   * {cacheService: an instance of cache-service}
   * the same object you would pass to cache-service's constructor
 
+#### .get()
+
+Same as superagent except that superagent's response object will be cached.
+
+#### .put(), .del()
+
+Same as superagent except that the generated cache key will be automatically invalidated when these HTTP verbs are used.
+
 #### .responseProp(prop)
 
 If you know you want a single, top-level property from superagent's response object, you can optimize what you cache by passing the property's name here. When used, it causes the .end() function's response to return superagent's response[prop].
@@ -150,18 +158,6 @@ Use this function when you need to override all of your caches' defaultExpiratio
 
 * seconds: integer
 
-###### Example
-
-```javascript
-superagent
-  .get(uri)
-  .expiration(300)
-  .end(function (error, response){
-    // handle response
-  }
-);
-```
-
 #### .cacheWhenEmpty(bool)
 
 Tell superagent-cache whether to cache the response object when it's `false`, `null`, or `{}`.This is especially useful when using .responseProp() or .prune() which can cause response to be falsy.  By default, cacheWhenEmpty is true.
@@ -169,19 +165,6 @@ Tell superagent-cache whether to cache the response object when it's `false`, `n
 ###### Arguments
 
 * bool: boolean, default: true
-
-###### Example
-
-```javascript
-//superagent-cache will, for this query, not cache falsy response objects
-superagent
-  .get(uri)
-  .cacheWhenEmpty(false)
-  .end(function (error, response){
-    // handle response
-  }
-);
-```
 
 #### .doQuery(bool)
 
@@ -191,22 +174,23 @@ Tell superagent-cache whether to perform an ajax call if the generated cache key
 
 * bool: boolean, default: true
 
+#### ._end(callback (err, response))
+
+This is a convenience method that allows you to skip all caching logic and use superagent as normal.
+
+###### Arguments
+
+* callback: a function that accepts superagent's error and response objects
+
+#### .cacheService
+
+If you don't have an external reference to superagent-cache's underlying cache-service instance, you can always get to it this way in case you need to manually add/invalidate keys you get from sources other than superagent queries.
+
 ###### Example
 
 ```javascript
-//superagent-cache will, for this query, not perform an ajax call
-superagent
-  .get(uri)
-  .doQuery(false)
-  .end(function (error, response){
-    // handle response
-  }
-);
+superagent.cacheService... //See cache-service's documentation for what you can do here
 ```
-
-#### ._end(callback (err, response))
-
-* This is a convenience method that allows you to skip all caching logic and use superagent as normal. 
 
 ## More Usage Examples
 
