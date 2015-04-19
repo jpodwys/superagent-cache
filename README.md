@@ -1,6 +1,6 @@
 # superagent-cache
 
-Superagent with built in tiered caching using [cache-service](https://github.com/fs-webdev/cache-service).
+Superagent with built-in tiered caching using [cache-service](https://github.com/fs-webdev/cache-service).
 
 ## Basic Usage
 
