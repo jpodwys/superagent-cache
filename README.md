@@ -63,7 +63,6 @@ If you know you want a single, top-level property from superagent's response obj
 //but all other top-level response properties,such as response.ok and response.status, will be ommitted
 superagent
   .get(uri)
-  .query(query)
   .responseProp('body')
   .end(function (error, response){
     // handle response
@@ -71,13 +70,13 @@ superagent
 );
 ```
 
-#### .prune(function (response))
+#### .prune(callback (response))
 
 If you need to dig several layers into superagent's response, you can do so by passing a function to .prune(). Your prune function will receive superagent's response and should return a truthy value or null.
 
 ###### Arguments
 
-* response: superagent's response object
+* callback: a function that accepts superagent's response object and returns a truthy value or null
 
 ###### Example
 
@@ -90,7 +89,6 @@ var prune = funtion(r){
 //and only r.body.user will be cached rather than the entire superagent response
 superagent
   .get(uri)
-  .query(query)
   .prune(prune)
   .end(function (error, response){
     // handle response
@@ -106,7 +104,6 @@ In the event that you need certain query params to execute a query but cannot ha
 
 * params: array of strings
 
-
 ###### Example
 
 ```javascript
@@ -116,6 +113,91 @@ superagent
   .get(uri)
   .query(query)
   .pruneParams(['token'])
+  .end(function (error, response){
+    // handle response
+  }
+);
+```
+
+#### .pruneOptions(options)
+
+This function works just like the .pruneParams() funciton except that it modifies the arguments passed to the .set() chainable method rather than those passed to the .query() chainable method.
+
+###### Arguments
+
+* options: array of strings
+
+###### Example
+
+```javascript
+//the superagent query will be executed with all headers
+//but the key used to store the superagent response will be generated without the passed header keys
+superagent
+  .get(uri)
+  .set(options)
+  .pruneOptions(['token'])
+  .end(function (error, response){
+    // handle response
+  }
+);
+```
+
+#### .expiration(seconds)
+
+Use this function when you need to override all of your caches' defaultExpiration properties for a particular cache entry.
+
+###### Arguments
+
+* seconds: integer
+
+###### Example
+
+```javascript
+superagent
+  .get(uri)
+  .expiration(300)
+  .end(function (error, response){
+    // handle response
+  }
+);
+```
+
+#### .cacheWhenEmpty(bool)
+
+Tell superagent-cache whether to cache the response object when it's `false`, `null`, or `{}`.This is especially useful when using .responseProp() or .prune() which can cause response to be falsy.  By default, cacheWhenEmpty is true.
+
+###### Arguments
+
+* bool: boolean, default: true
+
+###### Example
+
+```javascript
+//superagent-cache will, for this query, not cache falsy response objects
+superagent
+  .get(uri)
+  .cacheWhenEmpty(false)
+  .end(function (error, response){
+    // handle response
+  }
+);
+```
+
+#### .doQuery(bool)
+
+Tell superagent-cache whether to perform an ajax call if the generated cache key is not found.  By default, cacheWhenEmpty is true.
+
+###### Arguments
+
+* bool: boolean, default: true
+
+###### Example
+
+```javascript
+//superagent-cache will, for this query, not perform an ajax call
+superagent
+  .get(uri)
+  .doQuery(false)
   .end(function (error, response){
     // handle response
   }
