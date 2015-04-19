@@ -106,7 +106,7 @@ superagent
 
 #### .pruneParams(params)
 
-In the event that you need certain query params to execute a query but cannot have those params as part of your cache key (useful when security or time-related params are sent), use .pruneParams() to remove those properties. Pass .pruneParams() an array containing the param keys you want comitted from the cache key.
+In the event that you need certain query params to execute a query but cannot have those params as part of your cache key (useful when security or time-related params are sent), use .pruneParams() to remove those properties. Pass .pruneParams() an array containing the param keys you want omitted from the cache key.
 
 ###### Arguments
 
@@ -152,7 +152,7 @@ superagent
 
 #### .expiration(seconds)
 
-Use this function when you need to override all of your caches' defaultExpiration properties for a particular cache entry.
+Use this function when you need to override all of your caches' `defaultExpiration` properties (set via cache-service) for a particular cache entry.
 
 ###### Arguments
 
@@ -195,3 +195,11 @@ superagent.cacheService... //See cache-service's documentation for what you can 
 ## More Usage Examples
 
 Coming soon.
+
+## Roadmap
+
+* Make it so superagent-cache's `.end()` callback function does not require an `err` param
+* Make sure that `resetProps()` gets called when `._end()` is called directly
+* Add unit tests for the various ways headers can be added to calls
+* Add unit tests for the other points above
+* Add the 'More Usage Examples' section
