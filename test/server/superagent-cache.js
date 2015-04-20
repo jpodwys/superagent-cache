@@ -65,7 +65,7 @@ Custom API items to test:
 describe('Array', function(){
 
   beforeEach(function(){
-    superagent.cacheService.flushKeys();
+    superagent.cacheService.flush();
   });
 
   describe('superagentCache API tests', function () {
@@ -101,11 +101,11 @@ describe('Array', function(){
         .expiration(0.001)
         .end(function (err, response, key){
           expect(response.body.key).toBe('one');
-          superagent.cacheService.getKey(key, function (err, result){
+          superagent.cacheService.get(key, function (err, result){
             expect(result.body.key).toBe('one');
           });
           setTimeout(function(){
-            superagent.cacheService.getKey(key, function (err, result){
+            superagent.cacheService.get(key, function (err, result){
               expect(result).toBe(null);
               done();
             });
@@ -123,7 +123,7 @@ describe('Array', function(){
         .prune(prune)
         .end(function (err, response, key){
           expect(response).toBe(false);
-          superagent.cacheService.getKey(key, function (err, response){
+          superagent.cacheService.get(key, function (err, response){
             expect(response).toBe(false);
             done();
           });
@@ -141,7 +141,7 @@ describe('Array', function(){
         .cacheWhenEmpty(false)
         .end(function (err, response, key){
           expect(response).toBe(false);
-          superagent.cacheService.getKey(key, function (err, response){
+          superagent.cacheService.get(key, function (err, response){
             expect(response).toBe(null);
             done();
           });
@@ -225,7 +225,7 @@ describe('Array', function(){
         .get('localhost:3000/one')
         .end(function (err, response, key){
           expect(response.body.key).toBe('one');
-          superagent.cacheService.getKey(key, function (err, response){
+          superagent.cacheService.get(key, function (err, response){
             expect(response.body.key).toBe('one');
             done();
           });
@@ -238,14 +238,14 @@ describe('Array', function(){
         .get('localhost:3000/one')
         .end(function (err, response, key){
           expect(response.body.key).toBe('one');
-          superagent.cacheService.getKey(key, function (err, response){
+          superagent.cacheService.get(key, function (err, response){
             expect(response.body.key).toBe('one');
             superagent
               .put('localhost:3000/one')
               .end(function (err, response, key){
                 expect(typeof key).toBe('string');
                 expect(response.body.key).toBe('put');
-                superagent.cacheService.getKey(key, function (err, response){
+                superagent.cacheService.get(key, function (err, response){
                   expect(response).toBe(null);
                   done();
                 });
@@ -261,14 +261,14 @@ describe('Array', function(){
         .get('localhost:3000/one')
         .end(function (err, response, key){
           expect(response.body.key).toBe('one');
-          superagent.cacheService.getKey(key, function (err, response){
+          superagent.cacheService.get(key, function (err, response){
             expect(response.body.key).toBe('one');
             superagent
               .put('localhost:3000/one')
               .end(function (err, response, key){
                 expect(typeof key).toBe('string');
                 expect(response.body.key).toBe('put');
-                superagent.cacheService.getKey(key, function (err, response){
+                superagent.cacheService.get(key, function (err, response){
                   expect(response).toBe(null);
                   done();
                 });

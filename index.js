@@ -66,7 +66,7 @@ module.exports = function(superagent, config){
       var _this = this;
       var key = keygen(this, curProps);
       if(this.method === 'GET'){
-        superagent.cacheService.getKey(key, function (err, response){
+        superagent.cacheService.get(key, function (err, response){
           if(!err && response){
             cb(err, response, key);
           }
@@ -82,7 +82,7 @@ module.exports = function(superagent, config){
                     response = response[curProps.responseProp] || null;
                   }
                   if(!isEmpty(response) || curProps.cacheWhenEmpty){
-                    superagent.cacheService.setKey(key, response, curProps.expiration, function(){
+                    superagent.cacheService.set(key, response, curProps.expiration, function(){
                       cb(err, response, key);
                     });
                   }
@@ -101,7 +101,7 @@ module.exports = function(superagent, config){
       else{
         this._end(function (err, response){
           if(!err && response){
-            superagent.cacheService.deleteKeys(key, function (){
+            superagent.cacheService.del(key, function (){
               cb(err, response, key);  
             });
           }
