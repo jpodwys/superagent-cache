@@ -68,7 +68,8 @@ module.exports = function(superagent, config){
       if(this.method === 'GET'){
         superagent.cacheService.get(key, function (err, response){
           if(!err && response){
-            cb(err, response, key);
+            callbackExecutor(cb, err, response, key);
+            //cb(err, response, key);
           }
           else{
             if(curProps.doQuery){
@@ -83,17 +84,20 @@ module.exports = function(superagent, config){
                   }
                   if(!isEmpty(response) || curProps.cacheWhenEmpty){
                     superagent.cacheService.set(key, response, curProps.expiration, function(){
-                      cb(err, response, key);
+                      callbackExecutor(cb, err, response, key);
+                      //cb(err, response, key);
                     });
                   }
                   else{
-                    cb(err, response, key);
+                    callbackExecutor(cb, err, response, key);
+                    //cb(err, response, key);
                   }
                 }
               });
             }
             else{
-              cb(null, null, key);
+              callbackExecutor(cb, null, null, key);
+              //cb(null, null, key);
             }
           }
         });
@@ -102,7 +106,8 @@ module.exports = function(superagent, config){
         this._end(function (err, response){
           if(!err && response){
             superagent.cacheService.del(key, function (){
-              cb(err, response, key);  
+              callbackExecutor(cb, err, response, key);
+              //cb(err, response, key);  
             });
           }
         });
@@ -110,7 +115,8 @@ module.exports = function(superagent, config){
     }
     else{
       this._end(function (err, response){
-        cb(err, response, undefined);
+        callbackExecutor(cb, err, response, undefined);
+        //cb(err, response, undefined);
       });
     }
   }
@@ -209,6 +215,15 @@ module.exports = function(superagent, config){
 
   function resetProps(){
     props = {doQuery: true, cacheWhenEmpty: true};
+  }
+
+  function callbackExecutor(cb, err, result, key){
+    if(cb.length > 1){
+      cb(err, result, key);
+    }
+    else{
+      cb(result, key);
+    }
   }
 
   var noop = function(){}
