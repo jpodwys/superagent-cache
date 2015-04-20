@@ -122,7 +122,10 @@ module.exports = function(superagent, config){
   function keygen(req, cProps){
     var cleanParams = null;
     var cleanOptions = null;
-    var params = req.qs || arrayToObj(req.qsRaw) || stringToObj(req.req.path);
+    var params = req.qs || arrayToObj(req.qsRaw);
+    if(!params && req.req){
+      params = stringToObj(req.req.path);
+    }
     var options = (req.req && req.req._headers) ? req.req._headers : {};
     if(cProps.pruneParams || cProps.pruneOptions){
       cleanParams = (cProps.pruneParams) ? pruneObj(cloneObject(params), cProps.pruneParams) : params;

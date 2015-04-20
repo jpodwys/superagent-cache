@@ -1,6 +1,6 @@
 {
   "name": "superagent-cache",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Superagent with tiered caching provided by cache-service.",
   "main": "index.js",
   "dependencies": {
