@@ -46,7 +46,7 @@ npm test
 * superagent: an instance of superagent
 * cacheServiceConfig: an object that matches one of the following:
   * {cacheService: an instance of cache-service}
-  * the same object you would pass to cache-service's constructor
+  * the same object you would pass to cache-service's [constructor](https://github.com/jpodwys/cache-service#constructor)
 
 #### .get()
 
