@@ -5,8 +5,9 @@ SHOULD cache-service STORE/RETURN undefined WHEN KEY IS NOT FOUND?
 
 var cs = require('cache-service').cacheService;
 
-module.exports = function(superagent, config){
+module.exports = function(agent, config){
 
+  var superagent = (agent) ? agent : require('superagent');
   config = config || {};
   var Request = superagent.Request;
   var props = {doQuery: true, cacheWhenEmpty: true};
@@ -227,5 +228,9 @@ module.exports = function(superagent, config){
   }
 
   var noop = function(){}
+
+  if(!agent){
+    return superagent;
+  }
 
 }
