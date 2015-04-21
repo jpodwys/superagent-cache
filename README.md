@@ -39,7 +39,7 @@ npm test
 
 # API
 
-## require('superagent-cache)(superagent [, cacheServiceConfig])
+## require('superagent-cache')(superagent [, cacheServiceConfig])
 
 #### Arguments
 
