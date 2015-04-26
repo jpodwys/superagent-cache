@@ -39,12 +39,14 @@ npm test
 
 # API
 
-## require('superagent-cache')(superagent [, cacheServiceConfig])
+## require('superagent-cache')([superagent, cacheServiceConfig])
+
+All params here are optional. If the `superagent` param is empty or falsy, then the require statement will return a brand new, patched instance of superagent.
 
 #### Arguments
 
-* superagent: an instance of superagent
-* cacheServiceConfig: an object that matches one of the following:
+* (optional) superagent: an instance of superagent
+* (optional) cacheServiceConfig: an object that matches one of the following:
   * {cacheService: an instance of cache-service}
   * the same object you would pass to cache-service's [constructor](https://github.com/jpodwys/cache-service#constructor)
 
@@ -194,7 +196,73 @@ superagent.cacheService... //See cache-service's documentation for what you can 
 
 # More Usage Examples
 
-Coming soon.
+## Various ways of requiring superagent-cache
+
+#### When no params are passed
+
+```javascript
+//...it will return a patched superagent instance and create a cache-service instance with the default configuration
+var superagent = require('superagent-cache')();
+```
+
+#### When only `superagent` is passed
+
+```javascript
+//...it will patch the provided superagent and create a cache-service instance with the default configuration
+var superagent = require('superagent');
+require('superagent-cache)(superagent)
+```
+
+#### When only `cacheServiceConfig` is passed
+
+```javascript
+//...it will return a patched superagent instance and consume cacheServiceConfig as, or to create, its cache-service instance
+var cacheServiceConfig = {
+  cacheServiceConfig: {},
+  cacheModuleConfig: [
+    {type: 'node-cache', defaultExpiration: 1600},
+  ]
+}
+var superagent = require('superagent-cache')({}, cacheServiceConfig);
+```
+
+## Using `cacheServiceConfig`
+
+#### As an instance of cache-service
+
+Here, you have to require and instantiate cache-service yourself, but that means you get an external reference to it if needed.
+
+```javascript
+//First, require and instantiate cache-service with your preferred options
+var cs = require('cache-service).cacheService;
+var cacheService = new cs({verbose: true}, [
+  {type: 'node-cache', defaultExpiration: 1600},
+  {type: 'redis', redisEnv: 'REDISCLOUD_URL', defaultExpiraiton: 2000}
+]);
+//Now assign your cacheService instance to an object with a key of 'cacheService'
+var cacheServiceConfig = {cacheService: cacheService};
+//Now pass it into your superagent-cache require statement as the second parameter
+var superagent = require('superagent-cache')(null, cacheServiceConfig);
+```
+
+#### As a config object
+
+Here, superagent-cache takes care of requiring and instantiating cache-service for you, but you have no external reference to it (although it is accessible via `superagent.cacheService`).
+
+```javascript
+//First, create an object with keys 'cacheServiceConfig' and 'cacheModuleConfig' and assign them the same objects that cache-service takes in its constructor
+var cacheServiceConfig = {
+  cacheServiceConfig: {verbose: true},
+  cacheModuleConfig: [
+    {type: 'node-cache', defaultExpiration: 1600},
+    {type: 'redis', redisEnv: 'REDISCLOUD_URL', defaultExpiraiton: 2000}
+  ]
+}
+//Now pass this object to superagent-cache's require statement as the second parameter.
+var superagent = require('superagent-cache')(null, cacheServiceConfig);
+```
+
+More coming soon.
 
 # Roadmap
 
@@ -202,4 +270,4 @@ Coming soon.
 * ~~Make sure that `resetProps()` gets called when `._end()` is called directly~~
 * ~~Add unit tests for the various ways headers can be added to calls~~
 * Add unit tests for the other points above
-* Add the 'More Usage Examples' section
+* ~~Add the 'More Usage Examples' section~~
