@@ -196,6 +196,27 @@ superagent.cacheService... //See cache-service's documentation for what you can 
 
 # More Usage Examples
 
+## .end() callback argument list options
+
+As an optional parameter in the `.end(cb)` callback argument list, superagent-cache can give you the key it generated for each query as follows:
+
+```javascript
+superagent
+  .get(uri)
+  .end(function (err, response, key){
+    console.log('GENERATED KEY:', key);
+  }
+);
+```
+
+This can be useful if you need external access to a cache key and for testing purposes.
+
+However, you can only get it when you pass 3 params to the callback's argument list. The following rules will apply when listing arguments in the `.end(cb)` callback argument list:
+
+* 1 param: the param will always be `response`
+* 2 params: the params will always be `err` and `response`
+* 3 params: the params will always be `err`, `response`, and `key`
+
 ## Various ways of requiring superagent-cache
 
 #### When no params are passed
