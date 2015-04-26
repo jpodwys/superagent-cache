@@ -59,6 +59,9 @@ Custom API items to test:
         .expiration() should override all caches' defaultExpirations                done
         .cacheWhenEmpty() should cache when response is empty                       done
         .doQuery() should allow users to skip querying but still check all caches   done
+      other
+        .end() callback err param is optional                                       done
+        various means of adding headers all resolve the same way in the cache key   done
 
 */
 
@@ -69,6 +72,16 @@ describe('Array', function(){
   });
 
   describe('superagentCache API tests', function () {
+
+    it('.end() should not require the \'err\' callback param', function (done) {
+      superagent
+        .get('localhost:3000/one')
+        .end(function (response){
+          expect(response.body.key).toBe('one');
+          done();
+        }
+      );
+    });
 
     it('.get() .prune() .end() should prune response before caching', function (done) {
       var prune = function(r){
@@ -149,18 +162,47 @@ describe('Array', function(){
       );
     });
 
-    it('.get() .pruneParams() .end() should query with all params but create a key without the indicated params', function (done) {
+    it('.get() .query(object) .pruneParams() .end() should query with all params but create a key without the indicated params', function (done) {
       superagent
         .get('localhost:3000/params')
         .query({pruneParams: true, otherParams: false})
-        //.query('pruneParams=true')
-        //.query('otherParams=false')
         .pruneParams(['pruneParams'])
         .end(function (err, response, key){
-          // expect(response.body.pruneParams).toBe('true');
-          // expect(response.body.otherParams).toBe('false');
-          // expect(key.indexOf('pruneParams')).toBe(-1);
-          // expect(key.indexOf('otherParams')).toBeGreaterThan(-1);
+          expect(response.body.pruneParams).toBe('true');
+          expect(response.body.otherParams).toBe('false');
+          expect(key.indexOf('pruneParams')).toBe(-1);
+          expect(key.indexOf('otherParams')).toBeGreaterThan(-1);
+          done();
+        }
+      )
+    });
+
+    it('.get() .query(string&string) .pruneParams() .end() should query with all params but create a key without the indicated params', function (done) {
+      superagent
+        .get('localhost:3000/params')
+        .query('pruneParams=true&otherParams=false')
+        .pruneParams(['pruneParams'])
+        .end(function (err, response, key){
+          expect(response.body.pruneParams).toBe('true');
+          expect(response.body.otherParams).toBe('false');
+          expect(key.indexOf('pruneParams')).toBe(-1);
+          expect(key.indexOf('otherParams')).toBeGreaterThan(-1);
+          done();
+        }
+      )
+    });
+
+    it('.get() .query(string) .query(string) .pruneParams() .end() should query with all params but create a key without the indicated params', function (done) {
+      superagent
+        .get('localhost:3000/params')
+        .query('pruneParams=true')
+        .query('otherParams=false')
+        .pruneParams(['pruneParams'])
+        .end(function (err, response, key){
+          expect(response.body.pruneParams).toBe('true');
+          expect(response.body.otherParams).toBe('false');
+          expect(key.indexOf('pruneParams')).toBe(-1);
+          expect(key.indexOf('otherParams')).toBeGreaterThan(-1);
           done();
         }
       )

@@ -58,7 +58,12 @@ module.exports = function(agent, config){
     return this;
   }
 
-  Request.prototype._end = Request.prototype.end;
+  Request.prototype.execute = Request.prototype.end;
+
+  Request.prototype._end = function(cb){
+    resetProps();
+    this.execute(cb);
+  }
 
   Request.prototype.end = function(cb){
     var curProps = props;
@@ -70,7 +75,6 @@ module.exports = function(agent, config){
         superagent.cacheService.get(key, function (err, response){
           if(!err && response){
             callbackExecutor(cb, err, response, key);
-            //cb(err, response, key);
           }
           else{
             if(curProps.doQuery){
@@ -86,19 +90,16 @@ module.exports = function(agent, config){
                   if(!isEmpty(response) || curProps.cacheWhenEmpty){
                     superagent.cacheService.set(key, response, curProps.expiration, function(){
                       callbackExecutor(cb, err, response, key);
-                      //cb(err, response, key);
                     });
                   }
                   else{
                     callbackExecutor(cb, err, response, key);
-                    //cb(err, response, key);
                   }
                 }
               });
             }
             else{
               callbackExecutor(cb, null, null, key);
-              //cb(null, null, key);
             }
           }
         });
@@ -108,7 +109,6 @@ module.exports = function(agent, config){
           if(!err && response){
             superagent.cacheService.del(key, function (){
               callbackExecutor(cb, err, response, key);
-              //cb(err, response, key);  
             });
           }
         });
@@ -117,7 +117,6 @@ module.exports = function(agent, config){
     else{
       this._end(function (err, response){
         callbackExecutor(cb, err, response, undefined);
-        //cb(err, response, undefined);
       });
     }
   }
@@ -129,7 +128,8 @@ module.exports = function(agent, config){
   function keygen(req, cProps){
     var cleanParams = null;
     var cleanOptions = null;
-    var params = req.qs || arrayToObj(req.qsRaw);
+    //var params = req.qs || arrayToObj(req.qsRaw);
+    var params = !isEmpty(req.qs) ? req.qs : arrayToObj(req.qsRaw);
     if(!params && req.req){
       params = stringToObj(req.req.path);
     }
@@ -150,6 +150,7 @@ module.exports = function(agent, config){
     if(arr){
       var obj = {};
       for(var i = 0; i < arr.length; i++){
+        var str = arr[i];
         var kvArray = str.split('&');
         for(var j = 0; j < kvArray.length; j++){
           var kvString = kvArray[j].split('=');
@@ -218,13 +219,24 @@ module.exports = function(agent, config){
     props = {doQuery: true, cacheWhenEmpty: true};
   }
 
-  function callbackExecutor(cb, err, result, key){
-    if(cb.length > 1){
-      cb(err, result, key);
+  function callbackExecutor(cb, err, response, key){
+    if(cb.length === 1){
+      cb(response);
+    }
+    else if(cb.length === 2){
+      cb(err, response);
+    }
+    else if(cb.length === 3){
+      cb(err, response, key);
     }
     else{
-      cb(result, key);
+      throw new exception('UnsupportedCallbackException', 'You must have 1, 2, or 3 callback params in your .end() callback argument list.');
     }
+  }
+
+  function exception(name, message){
+    this.name = name;
+    this.message = message;
   }
 
   var noop = function(){}

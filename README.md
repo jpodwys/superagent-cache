@@ -198,8 +198,8 @@ Coming soon.
 
 # Roadmap
 
-* Make it so superagent-cache's `.end()` callback function does not require an `err` param
-* Make sure that `resetProps()` gets called when `._end()` is called directly
-* Add unit tests for the various ways headers can be added to calls
+* ~~Make it so superagent-cache's `.end()` callback function does not require an `err` param~~
+* ~~Make sure that `resetProps()` gets called when `._end()` is called directly~~
+* ~~Add unit tests for the various ways headers can be added to calls~~
 * Add unit tests for the other points above
 * Add the 'More Usage Examples' section
