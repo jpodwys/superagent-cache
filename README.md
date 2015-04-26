@@ -255,7 +255,7 @@ Here, you have to require and instantiate cache-service yourself, but that means
 
 ```javascript
 //First, require and instantiate cache-service with your preferred options
-var cs = require('cache-service).cacheService;
+var cs = require('cache-service').cacheService;
 var cacheService = new cs({verbose: true}, [
   {type: 'node-cache', defaultExpiration: 1600},
   {type: 'redis', redisEnv: 'REDISCLOUD_URL', defaultExpiraiton: 2000}
