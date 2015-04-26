@@ -50,13 +50,17 @@ All params here are optional. If the `superagent` param is empty or falsy, then 
   * {cacheService: an instance of cache-service}
   * the same object you would pass to cache-service's [constructor](https://github.com/jpodwys/cache-service#constructor)
 
-## .get()
+## .get(uri)
 
 Same as superagent except that superagent's response object will be cached.
 
-## .put(), .del()
+## .put(uri), .del(uri)
 
 Same as superagent except that the generated cache key will be automatically invalidated when these HTTP verbs are used.
+
+## .end(callback ([err,] response [, key]))
+
+Same as superagent except it optionally exposes the key superagent-cache generates as the third param in the callback's argument list. See the [usage example](#.end-callback-argument-list-options) for a more detailed explanation.
 
 ## .responseProp(prop)
 
