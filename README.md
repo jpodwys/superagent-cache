@@ -292,3 +292,4 @@ More coming soon.
 * ~~Add unit tests for the various ways headers can be added to calls~~
 * Add unit tests for the other points above
 * ~~Add the 'More Usage Examples' section~~
+* Add thorough comments and param descriptions to the code
