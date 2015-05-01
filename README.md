@@ -297,3 +297,4 @@ More coming soon.
 * Add unit tests for the other points above
 * ~~Add the 'More Usage Examples' section~~
 * Add thorough comments and param descriptions to the code
+* Enable the ability to use cache-service's `postApi` caching API
