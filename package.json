@@ -1,11 +1,11 @@
 {
   "name": "superagent-cache",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "description": "Superagent with tiered caching provided by cache-service.",
   "main": "index.js",
   "dependencies": {
     "superagent": "1.1.0",
-    "cache-service": "0.1.10"
+    "cache-service": "0.1.11"
   },
   "devDependencies": {
     "mocha": "1.13.0",
