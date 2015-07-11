@@ -26,7 +26,11 @@ By default, `superagent-cache` stores data in a bundled instance of [cacheModule
 
 # What Does the Default Configuration Give Me?
 
+You get the 'default configurations' when you don't provide any params to the `require('superagent-cache'()` command. This will return a fresh instance of `superagent` and bundle an instance of [cacheModule](https://github.com/jpodwys/cache-service-cache-module) for storing data. `cacheModule` is a slim, in-memory cache.
+
 # How Do I Use a Custom Configuration?
+
+To use a custom configuraiton, take advantage of the the two optional params you can hand to `superagent-cache`'s [`require` command](#user-content-requiresuperagent-cachesuperagent-cache) as follows:
 
 # Install
 
