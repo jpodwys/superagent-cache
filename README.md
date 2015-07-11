@@ -270,7 +270,7 @@ var superagent = require('superagent-cache')();
 #### When only `superagent` is passed
 
 ```javascript
-//...it will patch the provided superagent and create a cache-service instance with the default configuration
+//...it will patch the provided superagent and create a cacheModule instance (see 'default configuration')
 var superagent = require('superagent');
 require('superagent-cache)(superagent)
 ```
@@ -278,12 +278,10 @@ require('superagent-cache)(superagent)
 #### When only `cache` is passed
 
 ```javascript
-//...it will return a patched superagent instance and consume cache as, or to create, its own cache instance
-var cacheServiceConfig = {
-  cacheServiceConfig: {},
-  cache
-}
-var superagent = require('superagent-cache')({}, cacheServiceConfig);
+//...it will return a patched superagent instance and consume cache as its data store
+var redisModule = require('cache-service-redis');
+var redisCache = new redisModule({redisEnv: 'REDISCLOUD_URL'});
+var superagent = require('superagent-cache')(null, redisCache);
 ```
 
 # Roadmap
