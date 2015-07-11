@@ -2,6 +2,8 @@
 
 Superagent with flexible built-in caching.
 
+Upgrading from an older version? Please see the [Breaking Change History](#breaking-change-history) section.
+
 # Basic Usage
 
 Require and instantiate superagent-cache as follows to get the [default configuration](#what-does-the-default-configuraiton-give-me):
@@ -316,6 +318,12 @@ var redisModule = require('cache-service-redis');
 var redisCache = new redisModule({redisEnv: 'REDISCLOUD_URL'});
 var superagent = require('superagent-cache')(null, redisCache);
 ```
+
+# Breaking Change History
+
+#### 0.2.0
+
+* `superagent-cache` is now more flexible, allowing usage of any cache that matches `cache-service`'s API. To make it lighter, then, the hard dependency on `cache-service` was replaced with the much lighter `cacheModule`. As a result, `superagent-cache` can no longer construct a `cache-service` instance for you. If you wish to use `cache-service`, you must instantiate it externally and hand it in as `cache`--the second param in the `require` command.
 
 # Roadmap
 
