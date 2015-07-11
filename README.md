@@ -8,7 +8,7 @@ Require and instantiate superagent-cache as follows to get the [default configur
 ```javascript
 var superagent = require('superagent-cache')();
 ```
-Now you're ready for the magic! All of your existing `GET` requests will be cached with no extra bloat in your queries!
+Now you're ready for the magic! All of your existing `GET` and `HEAD` requests will be cached with no extra bloat in your queries! Any matching `DELETE` or `PUT` requests will automatically invalidate the associated cache key and value.
 ```javascript
 superagent
   .get(uri)
@@ -31,6 +31,35 @@ npm install superagent-cache --save
 ```javascript
 npm test
 ```
+
+# How Does it Work?
+
+`superagent-cache` patches `superagent` so that it can evaluate HTTP calls you make. Whenever a `GET` or `HEAD` request is made, `superagent-cache` generates a cache key by stringifying four properties:
+
+* your cache's `nameSpace` attribute (defaults to `undefined` if the property is not set)
+* you request's URI
+* your request's query params whether they're passed as an object or a string
+* your request's headers
+
+With the generated cache key, `superagent-cache` then checks its internal cache instance (which you have [full power to configure](how-do-i-use-a-custom-configuration)). If the key exists, `superagent-cache` returns it without performing the HTTP request and if the key does not exist, it makes the request, caches the `response` object ([mostly](#what-exactly-gets-cached)), and returns it.
+
+# What Exactly Gets Cached?
+
+If you don't use the `.prune()` or `.responseProp()` chainables detailed in the [API](#api), the `superagent-cache` will cache a gutted version of the `response` object. There are two reasons it doesn't just cache the entire `response` object:
+
+* The object is almost always circular and therefore not feasible to serialize
+* The object is _huge_ and would use way more space than necessary
+
+`superagent-cache` takes all of the following properties from the `response` object and clone them into a new object which then gets cached:
+
+* response.body
+* response.text
+* response.headers
+* response.statusCode
+* response.status
+* response.ok
+
+If you find yourself occasionally needing more than this, try out the `.prune()` or `.responseProp()` chainables. If your find yourself consistently needing more than this, make a pull request that adds the properties you need.
 
 # Where does superagent-cache store data?
 

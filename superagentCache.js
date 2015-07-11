@@ -3,7 +3,8 @@ module.exports = function(agent, cache){
   var superagent = (agent) ? agent : require('superagent');
   var Request = superagent.Request;
   var props = {doQuery: true, cacheWhenEmpty: true};
-  var supportedMethods = ['GET', 'PUT', 'DELETE'];
+  var supportedMethods = ['GET', 'HEAD', 'PUT', 'DELETE'];
+  var cacheableMethods = ['GET', 'HEAD'];
 
   if(cache){
     superagent.cache = cache;
@@ -61,7 +62,7 @@ module.exports = function(agent, cache){
     if(~supportedMethods.indexOf(this.method)){
       var _this = this;
       var key = keygen(this, curProps);
-      if(this.method === 'GET'){
+      if(~cacheableMethods.indexOf(this.method)){
         superagent.cache.get(key, function (err, response){
           if(!err && response){
             callbackExecutor(cb, err, response, key);
@@ -70,12 +71,14 @@ module.exports = function(agent, cache){
             if(curProps.doQuery){
               _this._end(function (err, response){
                 if(!err && response){
-                  response = gutResponse(response);
                   if(curProps.prune){
                     response = curProps.prune(response);
                   }
                   else if(curProps.responseProp){
                     response = response[curProps.responseProp] || null;
+                  }
+                  else{
+                    response = gutResponse(response);
                   }
                   if(!isEmpty(response) || curProps.cacheWhenEmpty){
                     superagent.cache.set(key, response, curProps.expiration, function(){
