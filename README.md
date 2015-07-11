@@ -291,6 +291,7 @@ var superagent = require('superagent-cache')({}, cacheServiceConfig);
 * ~~Make it so superagent-cache's `.end()` callback function does not require an `err` param~~
 * ~~Make sure that `resetProps()` gets called when `._end()` is called directly~~
 * ~~Add unit tests for the various ways headers can be added to calls~~
-* Add unit tests for the other points above
 * ~~Add the 'More Usage Examples' section~~
+* ~~Remove the hard dependency on `superagent-cache` and allow users to use any cache that matched `superagent-cache`'s API~~
+* Add unit tests for the other points above
 * Add thorough comments and param descriptions to the code
