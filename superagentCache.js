@@ -1,26 +1,16 @@
-/********************************************************
-MAKE SURE MY .end() ALLOWS FOR A SINGLE CALLBACK PARAM.
-SHOULD cache-service STORE/RETURN undefined WHEN KEY IS NOT FOUND?
-********************************************************/
-
-var cs = require('cache-service').cacheService;
-
-module.exports = function(agent, config){
+module.exports = function(agent, cache){
 
   var superagent = (agent) ? agent : require('superagent');
-  config = config || {};
   var Request = superagent.Request;
   var props = {doQuery: true, cacheWhenEmpty: true};
   var supportedMethods = ['GET', 'PUT', 'DELETE'];
 
-  if(config.cacheService){
-    superagent.cacheService = config.cacheService;
-  }
-  else if(config.cacheServiceConfig && config.cacheModuleConfig){
-    superagent.cacheService = new cs(config.cacheServiceConfig, config.cacheModuleConfig);
+  if(cache){
+    superagent.cache = cache;
   }
   else{
-    superagent.cacheService = new cs();
+    var cModule = require('cache-service-cache-module');
+    superagent.cache = new cModule();
   }
 
   Request.prototype.doQuery = function(doQuery){
@@ -72,7 +62,7 @@ module.exports = function(agent, config){
       var _this = this;
       var key = keygen(this, curProps);
       if(this.method === 'GET'){
-        superagent.cacheService.get(key, function (err, response){
+        superagent.cache.get(key, function (err, response){
           if(!err && response){
             callbackExecutor(cb, err, response, key);
           }
@@ -88,7 +78,7 @@ module.exports = function(agent, config){
                     response = response[curProps.responseProp] || null;
                   }
                   if(!isEmpty(response) || curProps.cacheWhenEmpty){
-                    superagent.cacheService.set(key, response, curProps.expiration, function(){
+                    superagent.cache.set(key, response, curProps.expiration, function(){
                       callbackExecutor(cb, err, response, key);
                     });
                   }
@@ -107,7 +97,7 @@ module.exports = function(agent, config){
       else{
         this._end(function (err, response){
           if(!err && response){
-            superagent.cacheService.del(key, function (){
+            superagent.cache.del(key, function (){
               callbackExecutor(cb, err, response, key);
             });
           }
@@ -128,7 +118,6 @@ module.exports = function(agent, config){
   function keygen(req, cProps){
     var cleanParams = null;
     var cleanOptions = null;
-    //var params = req.qs || arrayToObj(req.qsRaw);
     var params = !isEmpty(req.qs) ? req.qs : arrayToObj(req.qsRaw);
     if(!params && req.req){
       params = stringToObj(req.req.path);
@@ -139,7 +128,7 @@ module.exports = function(agent, config){
       cleanOptions = (cProps.pruneOptions) ? pruneObj(cloneObject(options), cProps.pruneOptions, true) : options;
     }
     return JSON.stringify({
-      nameSpace: superagent.cacheService.nameSpace,
+      nameSpace: superagent.cache.nameSpace,
       uri: req.url,
       params: cleanParams || params || {},
       options: cleanOptions || options || {}

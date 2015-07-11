@@ -1,9 +1,7 @@
 var expect = require('expect');
 var express = require('express');
 var superagent = require('superagent');
-var cs = require('cache-service').cacheService;
-var cacheService = new cs();
-require('../../')(superagent, {cacheService: cacheService});
+require('../../superagentCache')(superagent);
  
 var app = express();
  
@@ -68,7 +66,7 @@ Custom API items to test:
 describe('Array', function(){
 
   beforeEach(function(){
-    superagent.cacheService.flush();
+    superagent.cache.flush();
   });
 
   describe('superagentCache API tests', function () {
@@ -114,11 +112,11 @@ describe('Array', function(){
         .expiration(0.001)
         .end(function (err, response, key){
           expect(response.body.key).toBe('one');
-          superagent.cacheService.get(key, function (err, result){
+          superagent.cache.get(key, function (err, result){
             expect(result.body.key).toBe('one');
           });
           setTimeout(function(){
-            superagent.cacheService.get(key, function (err, result){
+            superagent.cache.get(key, function (err, result){
               expect(result).toBe(null);
               done();
             });
@@ -136,7 +134,7 @@ describe('Array', function(){
         .prune(prune)
         .end(function (err, response, key){
           expect(response).toBe(false);
-          superagent.cacheService.get(key, function (err, response){
+          superagent.cache.get(key, function (err, response){
             expect(response).toBe(false);
             done();
           });
@@ -154,7 +152,7 @@ describe('Array', function(){
         .cacheWhenEmpty(false)
         .end(function (err, response, key){
           expect(response).toBe(false);
-          superagent.cacheService.get(key, function (err, response){
+          superagent.cache.get(key, function (err, response){
             expect(response).toBe(null);
             done();
           });
@@ -267,7 +265,7 @@ describe('Array', function(){
         .get('localhost:3000/one')
         .end(function (err, response, key){
           expect(response.body.key).toBe('one');
-          superagent.cacheService.get(key, function (err, response){
+          superagent.cache.get(key, function (err, response){
             expect(response.body.key).toBe('one');
             done();
           });
@@ -280,14 +278,14 @@ describe('Array', function(){
         .get('localhost:3000/one')
         .end(function (err, response, key){
           expect(response.body.key).toBe('one');
-          superagent.cacheService.get(key, function (err, response){
+          superagent.cache.get(key, function (err, response){
             expect(response.body.key).toBe('one');
             superagent
               .put('localhost:3000/one')
               .end(function (err, response, key){
                 expect(typeof key).toBe('string');
                 expect(response.body.key).toBe('put');
-                superagent.cacheService.get(key, function (err, response){
+                superagent.cache.get(key, function (err, response){
                   expect(response).toBe(null);
                   done();
                 });
@@ -303,14 +301,14 @@ describe('Array', function(){
         .get('localhost:3000/one')
         .end(function (err, response, key){
           expect(response.body.key).toBe('one');
-          superagent.cacheService.get(key, function (err, response){
+          superagent.cache.get(key, function (err, response){
             expect(response.body.key).toBe('one');
             superagent
               .put('localhost:3000/one')
               .end(function (err, response, key){
                 expect(typeof key).toBe('string');
                 expect(response.body.key).toBe('put');
-                superagent.cacheService.get(key, function (err, response){
+                superagent.cache.get(key, function (err, response){
                   expect(response).toBe(null);
                   done();
                 });
