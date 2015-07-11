@@ -20,18 +20,6 @@ superagent
 ```
 Enjoy!
 
-# Where does superagent-cache store data?
-
-By default, `superagent-cache` stores data in a bundled instance of [cacheModule](https://github.com/jpodwys/cache-service-cache-module), but it can natively handle any cache that matches [cache-service](https://github.com/fs-webdev/cache-service)'s API. If `cache-service` itself is more than what you need, there's a list of [supported caches here](https://github.com/jpodwys/cache-service#available-cache-modules). Because `cache-service` and all of the supported caches have identical APIs, `superagent-cache` doesn't care which you use, so pick the one that's best for you or make a new one.
-
-# What Does the Default Configuration Give Me?
-
-You get the 'default configurations' when you don't provide any params to the `require('superagent-cache'()` command. This will return a fresh instance of `superagent` and bundle an instance of [cacheModule](https://github.com/jpodwys/cache-service-cache-module) for storing data. `cacheModule` is a slim, in-memory cache.
-
-# How Do I Use a Custom Configuration?
-
-To use a custom configuraiton, take advantage of the the two optional params you can hand to `superagent-cache`'s [`require` command](#user-content-requiresuperagent-cachesuperagent-cache) as follows:
-
 # Install
 
 ```javascript
@@ -43,6 +31,50 @@ npm install superagent-cache --save
 ```javascript
 npm test
 ```
+
+# Where does superagent-cache store data?
+
+By default, `superagent-cache` stores data in a bundled instance of [cacheModule](https://github.com/jpodwys/cache-service-cache-module), but it can natively handle any cache that matches [cache-service](https://github.com/fs-webdev/cache-service)'s API. See this list of [supported caches](#supported-cached) to see what works best with your use case. Because `cache-service` and all of the supported caches have identical APIs, `superagent-cache` doesn't care which you use, so pick the one that's best for you or make a new one.
+
+# What Does the Default Configuration Give Me?
+
+You get the 'default configurations' when you don't provide any params to the `require('superagent-cache'()` command. This will return a fresh instance of `superagent` and bundle an instance of [cacheModule](https://github.com/jpodwys/cache-service-cache-module) for storing data. `cacheModule` is a slim, in-memory cache.
+
+# How Do I Use a Custom Configuration?
+
+To use a custom configuraiton, take advantage of the the two optional params you can hand to `superagent-cache`'s [`require` command](#user-content-requiresuperagent-cachesuperagent-cache) as follows:
+
+```javascript
+//Require superagent and the cache module I want
+var superagent = require('superagent');
+var redisModule = require('cache-service-redis);
+var redisCache = new redisModule({redisEnv: 'REDISCLOUD_URL'});
+
+//Patch my superagent instance and pass in my redis cache
+require('superagent-cache')(superagent, redisCache);
+```
+
+This example allows you to provide your own instance of `superagent` to be patched as well as allowing you to pass in your own, pre-instantiated cache. Here's a list of [supported caches](#supported-caches).
+
+For more information on `require` command params usage, see [this section](#various-ways-of-requiring-superagentcache).
+
+# Supported Caches
+
+#### cache-service
+
+A tiered caching solution capable of wrapping any number of the below supported caches. [Available on NPM](https://github.com/jpodwys/cache-service).
+
+#### cache-service-redis
+
+A redis wrapper for cache-service or standalone use. [Available on NPM](https://github.com/jpodwys/cache-service-redis).
+
+#### cache-service-node-cache
+
+An in-memory cache wrapper for cache-service or standalone use. [Available on NPM](https://github.com/jpodwys/cache-service-node-cache).
+
+#### cache-service-cache-module
+
+A super-light in-memory cache for cache-service or standalone use. (This module is bundled with `superagent-cache` and provided in the default configuration if you do not provide a `cache` `require` param.) [Available on NPM](https://github.com/jpodwys/cache-service-cache-module).
 
 # API
 
@@ -254,44 +286,6 @@ var cacheServiceConfig = {
 var superagent = require('superagent-cache')({}, cacheServiceConfig);
 ```
 
-## Using `cacheServiceConfig`
-
-#### As an instance of cache-service
-
-Here, you have to require and instantiate cache-service yourself, but that means you get an external reference to it if needed.
-
-```javascript
-//First, require and instantiate cache-service with your preferred options
-var cs = require('cache-service').cacheService;
-var cacheService = new cs({verbose: true}, [
-  {type: 'node-cache', defaultExpiration: 1600},
-  {type: 'redis', redisEnv: 'REDISCLOUD_URL', defaultExpiraiton: 2000}
-]);
-//Now assign your cacheService instance to an object with a key of 'cacheService'
-var cacheServiceConfig = {cacheService: cacheService};
-//Now pass it into your superagent-cache require statement as the second parameter
-var superagent = require('superagent-cache')(null, cacheServiceConfig);
-```
-
-#### As a config object
-
-Here, superagent-cache takes care of requiring and instantiating cache-service for you, but you have no external reference to it (although it is accessible via `superagent.cacheService`).
-
-```javascript
-//First, create an object with keys 'cacheServiceConfig' and 'cacheModuleConfig' and assign them the same objects that cache-service takes in its constructor
-var cacheServiceConfig = {
-  cacheServiceConfig: {verbose: true},
-  cacheModuleConfig: [
-    {type: 'node-cache', defaultExpiration: 1600},
-    {type: 'redis', redisEnv: 'REDISCLOUD_URL', defaultExpiraiton: 2000}
-  ]
-}
-//Now pass this object to superagent-cache's require statement as the second parameter.
-var superagent = require('superagent-cache')(null, cacheServiceConfig);
-```
-
-More coming soon.
-
 # Roadmap
 
 * ~~Make it so superagent-cache's `.end()` callback function does not require an `err` param~~
@@ -300,4 +294,3 @@ More coming soon.
 * Add unit tests for the other points above
 * ~~Add the 'More Usage Examples' section~~
 * Add thorough comments and param descriptions to the code
-* Enable the ability to use cache-service's `postApi` caching API
