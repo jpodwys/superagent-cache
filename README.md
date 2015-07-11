@@ -132,7 +132,7 @@ Same as superagent except it optionally exposes the key superagent-cache generat
 
 > Caution: if you use this function, `supergent-cache` [will not gut](#what-exactly-gets-cached) the `response` object for you. Be sure that the result of your `.responseProp()` call will never be circular and is not larger than it needs to be. Consider using `.prune()` if you need to dig several layers into the `response` object.
 
-If you know you want a single, top-level property from superagent's response object, you can optimize what you cache by passing the property's name here. When used, it causes the .end() function's response to return superagent's response[prop].
+If you know you want a single, top-level property from superagent's response object, you can optimize what you cache by passing the property's name here. When used, it causes the `.end()` function's response to return superagent's response[prop].
 
 #### Arguments
 
@@ -156,7 +156,7 @@ superagent
 
 > Caution: if you use this function, `supergent-cache` [will not gut](#what-exactly-gets-cached) the `response` object for you. Be sure that the result of your `.prune()` callback function will never be circular and is not larger than it needs to be.
 
-If you need to dig several layers into superagent's response, you can do so by passing a function to .prune(). Your prune function will receive superagent's response and should return a truthy value or null. The benefit of using this function is that you can cache only what you need.
+If you need to dig several layers into superagent's response, you can do so by passing a function to `.prune()`. Your prune function will receive superagent's response and should return a truthy value or null. The benefit of using this function is that you can cache only what you need.
 
 #### Arguments
 
@@ -182,7 +182,7 @@ superagent
 
 ## .pruneParams(params)
 
-In the event that you need certain query params to execute a query but cannot have those params as part of your cache key (useful when security or time-related params are sent), use .pruneParams() to remove those properties. Pass .pruneParams() an array containing the param keys you want omitted from the cache key.
+In the event that you need certain query params to execute a query but cannot have those params as part of your cache key (useful when security or time-related params are sent), use `.pruneParams()` to remove those properties. Pass `.pruneParams()` an array containing the param keys you want omitted from the cache key.
 
 #### Arguments
 
@@ -205,7 +205,7 @@ superagent
 
 ## .pruneOptions(options)
 
-This function works just like the .pruneParams() funciton except that it modifies the arguments passed to the .set() chainable method rather than those passed to the .query() chainable method.
+This function works just like the `.pruneParams()` funciton except that it modifies the arguments passed to the `.set()` chainable method rather than those passed to the `.query()` chainable method.
 
 #### Arguments
 
@@ -236,7 +236,7 @@ Use this function when you need to override all of your caches' `defaultExpirati
 
 ## .cacheWhenEmpty(bool)
 
-Tell superagent-cache whether to cache the response object when it's `false`, `null`, or `{}`.This is especially useful when using .responseProp() or .prune() which can cause response to be falsy.  By default, cacheWhenEmpty is true.
+Tell `superagent-cache` whether to cache the response object when it's `false`, `null`, or `{}`.This is especially useful when using `.responseProp()` or `.prune()` which can cause `response` to be falsy.  By default, `cacheWhenEmpty` is `true`.
 
 #### Arguments
 
