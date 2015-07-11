@@ -1,13 +1,12 @@
 # superagent-cache
 
-Superagent with built-in tiered caching using [cache-service](https://github.com/jpodwys/cache-service).
+Superagent with flexible built-in caching.
 
 # Basic Usage
 
-Require and instantiate superagent-cache as follows:
+Require and instantiate superagent-cache as follows to get the [default configuration](#what-does-the-default-configuraiton-give-me):
 ```javascript
-var superagent = require('superagent');
-require('superagent-cache')(superagent);
+var superagent = require('superagent-cache')();
 ```
 Now you're ready for the magic! All of your existing `GET` requests will be cached with no extra bloat in your queries!
 ```javascript
@@ -23,12 +22,16 @@ Enjoy!
 
 # Where does superagent-cache store data?
 
-superagent-cache depends on [cache-service](https://github.com/fs-webdev/cache-service) to manage caches and store and retrieve data. cache-service supports any type of cache that has been wrapped in its interface (redis and node-cache wrappers are provided by default). See [cache-service's docs](https://github.com/fs-webdev/cache-service) for the complete API. See the [More Examples](#more-usage-examples) section for more detailed examples on caching specifics.
+By default, `superagent-cache` stores data in a bundled instance of [cacheModule](https://github.com/jpodwys/cache-service-cache-module), but it can natively handle any cache that matches [cache-service](https://github.com/fs-webdev/cache-service)'s API. If `cache-service` itself is more than what you need, there's a list of [supported caches here](https://github.com/jpodwys/cache-service#available-cache-modules). Because `cache-service` and all of the supported caches have identical APIs, `superagent-cache` doesn't care which you use, so pick the one that's best for you or make a new one.
+
+# What Does the Default Configuration Give Me?
+
+# How Do I Use a Custom Configuration?
 
 # Install
 
 ```javascript
-npm install superagent-cache
+npm install superagent-cache --save
 ```
 
 # Run Tests
@@ -39,16 +42,14 @@ npm test
 
 # API
 
-## require('superagent-cache')([superagent, cacheServiceConfig])
+## require('superagent-cache')([superagent, cache])
 
 All params here are optional. If the `superagent` param is empty or falsy, then the require statement will return a brand new, patched instance of superagent.
 
 #### Arguments
 
 * (optional) superagent: an instance of superagent
-* (optional) cacheServiceConfig: an object that matches one of the following:
-  * {cacheService: an instance of cache-service}
-  * the same object you would pass to cache-service's [constructor](https://github.com/jpodwys/cache-service#constructor)
+* (optional) cache: a pre-instantiated cache module that matches the `cache-service` API
 
 ## .get(uri)
 
@@ -188,14 +189,14 @@ This is a convenience method that allows you to skip all caching logic and use s
 
 * callback: a function that accepts superagent's error and response objects
 
-## .cacheService
+## .cache
 
-If you don't have an external reference to superagent-cache's underlying cache-service instance, you can always get to it this way in case you need to manually add/invalidate keys you get from sources other than superagent queries.
+This is the second constructor param you handed in when you instantiated `superagent-cache`. If you didn't provide one, then it's an instance of `cacheModule`.
 
 #### Example
 
 ```javascript
-superagent.cacheService... //See cache-service's documentation for what you can do here
+superagent.cache... //You can call any function existing on the cache you passed in
 ```
 
 # More Usage Examples
@@ -238,15 +239,13 @@ var superagent = require('superagent');
 require('superagent-cache)(superagent)
 ```
 
-#### When only `cacheServiceConfig` is passed
+#### When only `cache` is passed
 
 ```javascript
-//...it will return a patched superagent instance and consume cacheServiceConfig as, or to create, its cache-service instance
+//...it will return a patched superagent instance and consume cache as, or to create, its own cache instance
 var cacheServiceConfig = {
   cacheServiceConfig: {},
-  cacheModuleConfig: [
-    {type: 'node-cache', defaultExpiration: 1600},
-  ]
+  cache
 }
 var superagent = require('superagent-cache')({}, cacheServiceConfig);
 ```
