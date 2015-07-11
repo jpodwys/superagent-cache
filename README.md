@@ -130,7 +130,7 @@ Same as superagent except it optionally exposes the key superagent-cache generat
 
 ## .responseProp(prop)
 
-> Caution: if you use this function, `supergent-cache` will not [gut](#what-exactly-gets-cached) the `response` object for you. Be sure that the result of your `.responseProp()` call will never be circular and is not larger than it needs to be. Consider using `.prune()` if you need to dig several layers into the `response` object.
+> Caution: if you use this function, `supergent-cache` [will not gut](#what-exactly-gets-cached) the `response` object for you. Be sure that the result of your `.responseProp()` call will never be circular and is not larger than it needs to be. Consider using `.prune()` if you need to dig several layers into the `response` object.
 
 If you know you want a single, top-level property from superagent's response object, you can optimize what you cache by passing the property's name here. When used, it causes the .end() function's response to return superagent's response[prop].
 
@@ -154,7 +154,7 @@ superagent
 
 ## .prune(callback (response))
 
-> Caution: if you use this function, `supergent-cache` will not [gut](#what-exactly-gets-cached) the `response` object for you. Be sure that the result of your `.prune()` callback function will never be circular and is not larger than it needs to be.
+> Caution: if you use this function, `supergent-cache` [will not gut](#what-exactly-gets-cached) the `response` object for you. Be sure that the result of your `.prune()` callback function will never be circular and is not larger than it needs to be.
 
 If you need to dig several layers into superagent's response, you can do so by passing a function to .prune(). Your prune function will receive superagent's response and should return a truthy value or null. The benefit of using this function is that you can cache only what you need.
 
