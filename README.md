@@ -34,18 +34,18 @@ npm test
 
 # How Does it Work?
 
-`superagent-cache` patches `superagent` so that it can evaluate HTTP calls you make. Whenever a `GET` or `HEAD` request is made, `superagent-cache` generates a cache key by stringifying four properties:
+`superagent-cache` patches `superagent` so that it can evaluate `HTTP` calls you make. Whenever a `GET` or `HEAD` request is made, `superagent-cache` generates a cache key by stringifying four properties:
 
 * your cache's `nameSpace` attribute (defaults to `undefined` if the property is not set)
 * you request's URI
 * your request's query params whether they're passed as an object or a string
 * your request's headers
 
-With the generated cache key, `superagent-cache` then checks its internal cache instance (which you have [full power to configure](how-do-i-use-a-custom-configuration)). If the key exists, `superagent-cache` returns it without performing the HTTP request and if the key does not exist, it makes the request, caches the `response` object ([mostly](#what-exactly-gets-cached)), and returns it.
+With the generated cache key, `superagent-cache` then checks its internal cache instance (which you have [full power to configure](how-do-i-use-a-custom-configuration)). If the key exists, `superagent-cache` returns it without performing the `HTTP` request and if the key does not exist, it makes the request, caches the `response` object ([mostly](#what-exactly-gets-cached)), and returns it.
 
 # What Exactly Gets Cached?
 
-If you don't use the `.prune()` or `.responseProp()` chainables detailed in the [API](#api), the `superagent-cache` will cache a gutted version of the `response` object. There are two reasons it doesn't just cache the entire `response` object:
+If you don't use the `.prune()` or `.responseProp()` chainables detailed in the [API](#api), then `superagent-cache` will cache a gutted version of the `response` object. There are two reasons it doesn't just cache the entire `response` object:
 
 * The object is almost always circular and therefore not feasible to serialize
 * The object is _huge_ and would use way more space than necessary
@@ -122,7 +122,7 @@ Same as superagent except that superagent's response object will be cached.
 
 ## .put(uri), .del(uri)
 
-Same as superagent except that the generated cache key will be automatically invalidated when these HTTP verbs are used.
+Same as superagent except that the generated cache key will be automatically invalidated when these `HTTP` verbs are used.
 
 ## .end(callback ([err,] response [, key]))
 
