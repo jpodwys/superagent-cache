@@ -69,7 +69,7 @@ By default, `superagent-cache` stores data in a bundled instance of [cacheModule
 
 # What Does the Default Configuration Give Me?
 
-You get the 'default configurations' when you don't provide any params to the `require('superagent-cache'()` command. This will return a fresh instance of `superagent` and bundle an instance of [cacheModule](https://github.com/jpodwys/cache-service-cache-module) for storing data. `cacheModule` is a slim, in-memory cache.
+You get the 'default configurations' when you don't provide any params to the `require('superagent-cache')()` command. This will return a fresh instance of `superagent` and bundle an instance of [cacheModule](https://github.com/jpodwys/cache-service-cache-module) for storing data. `cacheModule` is a slim, in-memory cache.
 
 # How Do I Use a Custom Configuration?
 
@@ -78,7 +78,7 @@ To use a custom configuraiton, take advantage of the the two optional params you
 ```javascript
 //Require superagent and the cache module I want
 var superagent = require('superagent');
-var redisModule = require('cache-service-redis);
+var redisModule = require('cache-service-redis');
 var redisCache = new redisModule({redisEnv: 'REDISCLOUD_URL'});
 
 //Patch my superagent instance and pass in my redis cache
