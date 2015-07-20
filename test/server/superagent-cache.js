@@ -1,7 +1,9 @@
 var expect = require('expect');
 var express = require('express');
 var superagent = require('superagent');
-require('../../superagentCache')(superagent);
+var cModule = require('cache-service-cache-module');
+var cacheModule = new cModule({backgroundRefreshInterval: 500});
+require('../../superagentCache')(superagent, cacheModule);
  
 var app = express();
  
@@ -120,7 +122,7 @@ describe('Array', function(){
               expect(result).toBe(null);
               done();
             });
-          }, 10);
+          }, 20);
         }
       );
     });
@@ -315,6 +317,46 @@ describe('Array', function(){
               }
             );
           });
+        }
+      );
+    });
+
+  });
+
+  describe('superagentCache background refresh tests', function () {
+    
+    it('.get() .expiration() .backgroundRefresh() .end() refresh a key shortly before expiration', function (done) {
+      superagent
+        .get('localhost:3000/one')
+        .expiration(1)
+        .end(function (err, response, key){
+          expect(typeof key).toBe('string');
+          expect(response.body.key).toBe('one');
+          setTimeout(function(){
+            superagent.cache.get(key, function (err, response, key){
+              //expect(typeof key).toBe('string');
+              expect(response).toBe(null);
+              done();
+            });
+          }, 1500);
+        }
+      );
+    });
+
+    it('.get() .expiration() .backgroundRefresh() .end() refresh a key shortly before expiration', function (done) {
+      superagent
+        .get('localhost:3000/one')
+        .expiration(1)
+        .backgroundRefresh(true)
+        .end(function (err, response, key){
+          expect(typeof key).toBe('string');
+          expect(response.body.key).toBe('one');
+          setTimeout(function(){
+            superagent.cache.get(key, function (err, response){
+              expect(response.body.key).toBe('one');
+              done();
+            });
+          }, 1500);
         }
       );
     });

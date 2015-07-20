@@ -49,6 +49,11 @@ module.exports = function(agent, cache){
     return this;
   }
 
+  Request.prototype.backgroundRefresh = function(backgroundRefresh){
+    props.backgroundRefresh = backgroundRefresh;
+    return this;
+  }
+
   Request.prototype.execute = Request.prototype.end;
 
   Request.prototype._end = function(cb){
@@ -81,7 +86,11 @@ module.exports = function(agent, cache){
                     response = gutResponse(response);
                   }
                   if(!isEmpty(response) || curProps.cacheWhenEmpty){
-                    superagent.cache.set(key, response, curProps.expiration, function(){
+                    var refresh = curProps.backgroundRefresh || null;
+                    if(typeof refresh == 'boolean'){
+                      refresh = getBackgroundRefreshFunction(key, curProps);
+                    }
+                    superagent.cache.set(key, response, curProps.expiration, refresh, function(){
                       callbackExecutor(cb, err, response, key);
                     });
                   }
@@ -132,6 +141,7 @@ module.exports = function(agent, cache){
     }
     return JSON.stringify({
       nameSpace: superagent.cache.nameSpace,
+      method: req.method,
       uri: req.url,
       params: cleanParams || params || {},
       options: cleanOptions || options || {}
@@ -209,6 +219,32 @@ module.exports = function(agent, cache){
 
   function resetProps(){
     props = {doQuery: true, cacheWhenEmpty: true};
+  }
+
+  function getBackgroundRefreshFunction(key, props){
+    key = JSON.parse(key);
+    var method = key.method.toLowerCase();
+    var refresh = function(cb){
+      superagent
+        [method](key.uri)
+        .query(key.params)
+        .set(key.options)
+        .doQuery(props.doQuery)
+        .pruneParams(props.pruneParams)
+        .pruneOptions(props.pruneOptions)
+        .prune(props.prune)
+        .responseProp(props.responseProp)
+        .expiration(props.expiration)
+        .cacheWhenEmpty(props.cacheWhenEmpty)
+        ._end(function (err, response){
+          if(!props.prune && !props.pruneParams){
+            response = gutResponse(response);
+          }
+          cb(err, response)
+        }
+      );
+    }
+    return refresh;
   }
 
   function callbackExecutor(cb, err, response, key){
