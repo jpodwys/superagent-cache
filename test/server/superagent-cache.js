@@ -325,7 +325,7 @@ describe('Array', function(){
 
   describe('superagentCache background refresh tests', function () {
     
-    it('.get() .expiration() .backgroundRefresh() .end() refresh a key shortly before expiration', function (done) {
+    it('.get() .expiration() .end() background refresh should not work if the chainable is not used', function (done) {
       superagent
         .get('localhost:3000/one')
         .expiration(1)
@@ -343,7 +343,7 @@ describe('Array', function(){
       );
     });
 
-    it('.get() .expiration() .backgroundRefresh() .end() refresh a key shortly before expiration', function (done) {
+    it('.get() .expiration() .backgroundRefresh() .end() background refresh should refresh a key shortly before expiration', function (done) {
       superagent
         .get('localhost:3000/one')
         .expiration(1)
