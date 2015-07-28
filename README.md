@@ -252,6 +252,14 @@ Tell superagent-cache whether to perform an ajax call if the generated cache key
 
 * bool: boolean, default: true
 
+## .backgroundRefresh(value)
+
+Tell the underlying `cache` provided in the `require` command to enable background refresh for the generated key and value. If a function is provided, it will use the function, if a boolean is provided, it will use the boolean, if nothing is provided, it will default to true.
+
+#### Arguments
+
+* value: boolean || function || undefined, default: true
+
 ## ._end(callback (err, response))
 
 This is a convenience method that allows you to skip all caching logic and use superagent as normal.
