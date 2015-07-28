@@ -50,7 +50,7 @@ module.exports = function(agent, cache){
   }
 
   Request.prototype.backgroundRefresh = function(backgroundRefresh){
-    props.backgroundRefresh = backgroundRefresh;
+    props.backgroundRefresh = (typeof backgroundRefresh !== 'undefined') ? backgroundRefresh : true;
     return this;
   }
 
