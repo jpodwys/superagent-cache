@@ -254,6 +254,8 @@ Tell superagent-cache whether to perform an ajax call if the generated cache key
 
 ## .backgroundRefresh(value)
 
+> See the [Using Background Refresh](#using-background-refresh) section for more information.
+
 Tell the underlying `cache` provided in the `require` command to enable background refresh for the generated key and value. If a function is provided, it will use the function, if a boolean is provided, it will use the boolean, if nothing is provided, it will default to true.
 
 #### Arguments
@@ -276,6 +278,71 @@ This is the second constructor param you handed in when you instantiated `supera
 
 ```javascript
 superagent.cache... //You can call any function existing on the cache you passed in
+```
+
+# Using Background Refresh
+
+With a typical cache setup, you're left to find the perfect compromise between having a long expiration so that users don't have to suffer through the worst case load time, and a short expiration so data doesn't get stale. `superagent-cache` eliminates the need to worry about users suffering through the longest wait time by automatically refreshing keys for you.
+
+#### Setup
+
+`superagent-cache` relies on the background refresh feature of `cache` you pass into the `require` command. When you use the `.backgroundRefresh()` chainable, `superagent-cache` passes the provided value into `cache`. This means that:
+
+* `cache` must have `backgroundRefreshEnabled` set to `true` (it defaults to `false`)
+* If you're using `cache-service`, you almost certainly want `cache-service`'s `writeToVolatileCaches` property set to `true` (it defaults to `true`) so that the refresh will propogate forward to earlier caches (`cache-service` background refreshses ONLY to the final cache passed to it)
+
+#### Configure
+
+If desired, configure the following properties within `cache`:
+
+* `backgroundRefreshInterval`
+* `backgroundRefreshMinTtl`
+* `backgroundRefreshIntervalCheck`
+
+#### Use
+
+Background refresh is exposed via the `.backgroundRefresh()` chainable.
+
+When `true` or no param is passed to `.backgroundRefresh()`, it will generate a `superagent` call identical to the one that triggered it and pass that to `cache`.
+
+```javascript
+superagent
+  .get(uri)
+  .backgroundRefresh()
+  .end(function (err, response){
+    //Response will no be refreshed in the background
+  }
+);
+```
+
+When a function is passed, it will use that function. Read on for background refresh function requirements.
+
+```javascript
+var refresh = function(cb){
+  var response = goGetData();
+  cb(null, response);
+}
+
+superagent
+  .get(uri)
+  .backgroundRefresh(refresh)
+  .end(function (err, response){
+    //Response will no be refreshed in the background
+  }
+);
+```
+
+When `false` is passed, it will do nothing.
+
+#### The Refresh Param
+
+The `refresh` param MUST be a function that accepts a callback and passes `err` and `response` to it as follows:
+
+```javascript
+var refresh = function(cb){
+  var response = goGetData();
+  cb(null, response);
+}
 ```
 
 # More Usage Examples
