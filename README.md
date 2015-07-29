@@ -286,7 +286,7 @@ With a typical cache setup, you're left to find the perfect compromise between h
 
 #### Setup
 
-`superagent-cache` relies on the background refresh feature of `cache` you pass into the `require` command. When you use the `.backgroundRefresh()` chainable, `superagent-cache` passes the provided value into `cache`. This means that:
+`superagent-cache` relies on the background refresh feature of the `cache` param you pass into the `require` command. When you use the `.backgroundRefresh()` chainable, `superagent-cache` passes the provided value into `cache`. This means that:
 
 * `cache` must have `backgroundRefreshEnabled` set to `true` (it defaults to `false`)
 * If you're using `cache-service`, you almost certainly want `cache-service`'s `writeToVolatileCaches` property set to `true` (it defaults to `true`) so that the refresh will propogate forward to earlier caches (`cache-service` background refreshses ONLY to the final cache passed to it)
