@@ -318,7 +318,7 @@ superagent
 When a function is passed, it will use that function. Read on for background refresh function requirements.
 
 ```javascript
-var refresh = function(cb){
+var refresh = function(key, cb){
   var response = goGetData();
   cb(null, response);
 }
@@ -336,10 +336,15 @@ When `false` is passed, it will do nothing.
 
 #### The Refresh Param
 
-The `refresh` param MUST be a function that accepts a callback and passes `err` and `response` to it as follows:
+###### refresh(key, cb(err, response))
+
+* key: type: string: this is the key that is being refreshed
+* cb: type: function: you must trigger this function to pass the data that should replace the current key's value
+
+The `refresh` param MUST be a function that accepts `key` and a callback function that accepts `err` and `response` as follows:
 
 ```javascript
-var refresh = function(cb){
+var refresh = function(key, cb){
   var response = goGetData();
   cb(null, response);
 }
