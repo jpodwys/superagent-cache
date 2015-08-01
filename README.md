@@ -284,12 +284,13 @@ superagent.cache... //You can call any function existing on the cache you passed
 
 With a typical cache setup, you're left to find the perfect compromise between having a long expiration so that users don't have to suffer through the worst case load time, and a short expiration so data doesn't get stale. `superagent-cache` eliminates the need to worry about users suffering through the longest wait time by automatically refreshing keys for you.
 
+#### How do I turn it on?
+
+By default, background refresh is off. It will turn itself on the first time you use the `.backgroundRefresh)` chainable.
+
 #### Setup
 
-`superagent-cache` relies on the background refresh feature of the `cache` param you pass into the `require` command. When you use the `.backgroundRefresh()` chainable, `superagent-cache` passes the provided value into `cache`. This means that:
-
-* `cache` must have `backgroundRefreshEnabled` set to `true` (it defaults to `false`)
-* If you're using `cache-service`, you almost certainly want `cache-service`'s `writeToVolatileCaches` property set to `true` (it defaults to `true`) so that the data set by background refresh will propogate forward to earlier caches (`cache-service` ONLY background refreshses to the final cache passed to it)
+`superagent-cache` relies on the background refresh feature of the `cache` param you pass into the `require` command. When you use the `.backgroundRefresh()` chainable, `superagent-cache` passes the provided value into `cache`. This means that if you're using `cache-service`, you almost certainly want `cache-service`'s `writeToVolatileCaches` property set to `true` (it defaults to `true`) so that the data set by background refresh will propogate forward to earlier caches (`cache-service` ONLY background refreshses to the final cache passed to it)
 
 #### Configure
 
