@@ -69,7 +69,7 @@ By default, `superagent-cache` stores data in a bundled instance of [cacheModule
 
 # What Does the Default Configuration Give Me?
 
-You get the 'default configurations' when you don't provide any params to the `require('superagent-cache')()` command. This will return a fresh instance of `superagent` and bundle an instance of [cacheModule](https://github.com/jpodwys/cache-service-cache-module) for storing data. `cacheModule` is a slim, in-memory cache.
+You get the 'default configuration' when you don't provide any params to the `require('superagent-cache')()` command. This will return a fresh instance of `superagent` and bundle an instance of [cacheModule](https://github.com/jpodwys/cache-service-cache-module) for storing data. `cacheModule` is a slim, in-memory cache.
 
 # How Do I Use a Custom Configuration?
 
@@ -230,7 +230,7 @@ superagent
 
 ## .expiration(seconds)
 
-Use this function when you need to override all of your caches' `defaultExpiration` properties (set via cache-service) for a particular cache entry.
+Use this function when you need to override your `cache`'s `defaultExpiration` property for a particular cache entry.
 
 #### Arguments
 
