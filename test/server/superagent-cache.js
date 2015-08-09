@@ -174,7 +174,7 @@ describe('Array', function(){
           expect(key.indexOf('otherParams')).toBeGreaterThan(-1);
           done();
         }
-      )
+      );
     });
 
     it('.get() .query(string&string) .pruneParams() .end() should query with all params but create a key without the indicated params', function (done) {
@@ -189,7 +189,7 @@ describe('Array', function(){
           expect(key.indexOf('otherParams')).toBeGreaterThan(-1);
           done();
         }
-      )
+      );
     });
 
     it('.get() .query(string) .query(string) .pruneParams() .end() should query with all params but create a key without the indicated params', function (done) {
@@ -334,7 +334,6 @@ describe('Array', function(){
           expect(response.body.key).toBe('one');
           setTimeout(function(){
             superagent.cache.get(key, function (err, response, key){
-              //expect(typeof key).toBe('string');
               expect(response).toBe(null);
               done();
             });
@@ -354,6 +353,50 @@ describe('Array', function(){
           setTimeout(function(){
             superagent.cache.get(key, function (err, response){
               expect(response.body.key).toBe('one');
+              done();
+            });
+          }, 1500);
+        }
+      );
+    });
+
+    it('.get() .query(string&string) .expiration() .backgroundRefresh() .end() background refresh should not work if the chainable is not used', function (done) {
+      superagent
+        .get('localhost:3000/params')
+        .query('pruneParams=true&otherParams=false')
+        .pruneParams(['pruneParams'])
+        .end(function (err, response, key){
+          expect(response.body.pruneParams).toBe('true');
+          expect(response.body.otherParams).toBe('false');
+          expect(key.indexOf('pruneParams')).toBe(-1);
+          expect(key.indexOf('otherParams')).toBeGreaterThan(-1);
+          setTimeout(function(){
+            superagent.cache.get(key, function (err, response){
+              expect(response).toBe(null);
+              done();
+            });
+          }, 1500);
+        }
+      );
+    });
+
+    it('.get() .query(string&string) .expiration() .backgroundRefresh() .end() background refresh should refresh a key shortly before expiration', function (done) {
+      superagent
+        .get('localhost:3000/params')
+        .query('pruneParams=true&otherParams=false')
+        .pruneParams(['pruneParams'])
+        .backgroundRefresh(true)
+        .end(function (err, response, key){
+          expect(response.body.pruneParams).toBe('true');
+          expect(response.body.otherParams).toBe('false');
+          expect(key.indexOf('pruneParams')).toBe(-1);
+          expect(key.indexOf('otherParams')).toBeGreaterThan(-1);
+          setTimeout(function(){
+            superagent.cache.get(key, function (err, response){
+              expect(response.body.pruneParams).toBe('true');
+              expect(response.body.otherParams).toBe('false');
+              expect(key.indexOf('pruneParams')).toBe(-1);
+              expect(key.indexOf('otherParams')).toBeGreaterThan(-1);
               done();
             });
           }, 1500);

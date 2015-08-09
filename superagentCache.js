@@ -88,9 +88,9 @@ module.exports = function(agent, cache){
                   if(!isEmpty(response) || curProps.cacheWhenEmpty){
                     var refresh = curProps.backgroundRefresh || null;
                     if(typeof refresh == 'boolean'){
-                      refresh = getBackgroundRefreshFunction(key, curProps);
+                      refresh = getBackgroundRefreshFunction(curProps);
                     }
-                    superagent.cache.set(key, response, curProps.expiration, refresh, function(){
+                    superagent.cache.set(key, response, curProps.expiration, refresh, function (){
                       callbackExecutor(cb, err, response, key);
                     });
                   }
@@ -134,7 +134,7 @@ module.exports = function(agent, cache){
     if(!params && req.req){
       params = stringToObj(req.req.path);
     }
-    var options = (req.req && req.req._headers) ? req.req._headers : {};
+    var options = (req.req && req.req._headers) ? req.req._headers : null;
     if(cProps.pruneParams || cProps.pruneOptions){
       cleanParams = (cProps.pruneParams) ? pruneObj(cloneObject(params), cProps.pruneParams) : params;
       cleanOptions = (cProps.pruneOptions) ? pruneObj(cloneObject(options), cProps.pruneOptions, true) : options;
@@ -143,13 +143,13 @@ module.exports = function(agent, cache){
       nameSpace: superagent.cache.nameSpace,
       method: req.method,
       uri: req.url,
-      params: cleanParams || params || {},
-      options: cleanOptions || options || {}
+      params: cleanParams || params || null,
+      options: cleanOptions || options || null
     });
   }
 
   function arrayToObj(arr){
-    if(arr){
+    if(arr && arr.length){
       var obj = {};
       for(var i = 0; i < arr.length; i++){
         var str = arr[i];
@@ -221,30 +221,27 @@ module.exports = function(agent, cache){
     props = {doQuery: true, cacheWhenEmpty: true};
   }
 
-  function getBackgroundRefreshFunction(key, props){
-    key = JSON.parse(key);
-    var method = key.method.toLowerCase();
-    var refresh = function(cb){
-      superagent
+  function getBackgroundRefreshFunction(curProps){
+    return function(key, cb){
+      key = JSON.parse(key);
+      var method = key.method.toLowerCase();
+      var request = superagent
         [method](key.uri)
-        .query(key.params)
-        .set(key.options)
-        .doQuery(props.doQuery)
-        .pruneParams(props.pruneParams)
-        .pruneOptions(props.pruneOptions)
-        .prune(props.prune)
-        .responseProp(props.responseProp)
-        .expiration(props.expiration)
-        .cacheWhenEmpty(props.cacheWhenEmpty)
-        ._end(function (err, response){
-          if(!props.prune && !props.pruneParams){
-            response = gutResponse(response);
-          }
-          cb(err, response)
-        }
-      );
+        .doQuery(curProps.doQuery)
+        .pruneParams(curProps.pruneParams)
+        .pruneOptions(curProps.pruneOptions)
+        .prune(curProps.prune)
+        .responseProp(curProps.responseProp)
+        .expiration(curProps.expiration)
+        .cacheWhenEmpty(curProps.cacheWhenEmpty);
+      if(key.params){
+        request.query(key.params)
+      }
+      if(key.options){
+        request.set(key.options);
+      }
+      request.end(cb);
     }
-    return refresh;
   }
 
   function callbackExecutor(cb, err, response, key){
