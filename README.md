@@ -6,7 +6,7 @@ Upgrading from an older version? Please see the [Breaking Change History](#break
 
 # Basic Usage
 
-Require and instantiate superagent-cache as follows to get the [default configuration](#what-does-the-default-configuraiton-give-me):
+Require and instantiate superagent-cache as follows to get the [default configuration](#what-does-the-default-configuration-give-me):
 ```javascript
 var superagent = require('superagent-cache')();
 ```
