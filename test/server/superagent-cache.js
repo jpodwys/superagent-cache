@@ -342,7 +342,7 @@ describe('Array', function(){
       );
     });
 
-    it('.get() .expiration() .backgroundRefresh() .end() background refresh should refresh a key shortly before expiration', function (done) {
+    it('.get() .expiration() .backgroundRefresh(true) .end() background refresh should refresh a key shortly before expiration', function (done) {
       superagent
         .get('localhost:3000/one')
         .expiration(1)
@@ -360,7 +360,7 @@ describe('Array', function(){
       );
     });
 
-    it('.get() .query(string&string) .expiration() .backgroundRefresh() .end() background refresh should not work if the chainable is not used', function (done) {
+    it('.get() .query(string&string) .expiration() .end() background refresh should not work if the chainable is not used', function (done) {
       superagent
         .get('localhost:3000/params')
         .query('pruneParams=true&otherParams=false')
@@ -380,7 +380,7 @@ describe('Array', function(){
       );
     });
 
-    it('.get() .query(string&string) .expiration() .backgroundRefresh() .end() background refresh should refresh a key shortly before expiration', function (done) {
+    it('.get() .query(string&string) .expiration() .backgroundRefresh(true) .end() background refresh should refresh a key shortly before expiration', function (done) {
       superagent
         .get('localhost:3000/params')
         .query('pruneParams=true&otherParams=false')
@@ -397,6 +397,50 @@ describe('Array', function(){
               expect(response.body.otherParams).toBe('false');
               expect(key.indexOf('pruneParams')).toBe(-1);
               expect(key.indexOf('otherParams')).toBeGreaterThan(-1);
+              done();
+            });
+          }, 1500);
+        }
+      );
+    });
+
+    it('.get() .expiration() .backgroundRefresh(function) .end() background refresh should refresh a key shortly before expiration', function (done) {
+      var refresh = function(key, cb){
+        cb(null, {body:{key: 'one'}});
+      }
+
+      superagent
+        .get('localhost:3000/one')
+        .expiration(1)
+        .backgroundRefresh(refresh)
+        .end(function (err, response, key){
+          expect(typeof key).toBe('string');
+          expect(response.body.key).toBe('one');
+          setTimeout(function(){
+            superagent.cache.get(key, function (err, response){
+              expect(response.body.key).toBe('one');
+              done();
+            });
+          }, 1500);
+        }
+      );
+    });
+
+    it('.get() .expiration() .backgroundRefresh(function) .end() background refresh should refresh a key shortly before expiration', function (done) {
+      var refresh = function(key, cb){
+        cb(null, {body:{key: 'two'}});
+      }
+
+      superagent
+        .get('localhost:3000/one')
+        .expiration(1)
+        .backgroundRefresh(refresh)
+        .end(function (err, response, key){
+          expect(typeof key).toBe('string');
+          expect(response.body.key).toBe('one');
+          setTimeout(function(){
+            superagent.cache.get(key, function (err, response){
+              expect(response.body.key).toBe('two');
               done();
             });
           }, 1500);
