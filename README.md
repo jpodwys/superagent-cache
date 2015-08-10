@@ -6,7 +6,7 @@ Upgrading from an older version? Please see the [Breaking Change History](#break
 
 # Basic Usage
 
-Require and instantiate superagent-cache as follows to get the [default configuration](#what-does-the-default-configuraiton-give-me):
+Require and instantiate superagent-cache as follows to get the [default configuration](#what-does-the-default-configuration-give-me):
 ```javascript
 var superagent = require('superagent-cache')();
 ```
@@ -69,7 +69,7 @@ By default, `superagent-cache` stores data in a bundled instance of [cacheModule
 
 # What Does the Default Configuration Give Me?
 
-You get the 'default configurations' when you don't provide any params to the `require('superagent-cache')()` command. This will return a fresh instance of `superagent` and bundle an instance of [cacheModule](https://github.com/jpodwys/cache-service-cache-module) for storing data. `cacheModule` is a slim, in-memory cache.
+You get the 'default configuration' when you don't provide any params to the `require('superagent-cache')()` command. This will return a fresh instance of `superagent` and bundle an instance of [cacheModule](https://github.com/jpodwys/cache-service-cache-module) for storing data. `cacheModule` is a slim, in-memory cache.
 
 # How Do I Use a Custom Configuration?
 
@@ -230,7 +230,7 @@ superagent
 
 ## .expiration(seconds)
 
-Use this function when you need to override all of your caches' `defaultExpiration` properties (set via cache-service) for a particular cache entry.
+Use this function when you need to override your `cache`'s `defaultExpiration` property for a particular cache entry.
 
 #### Arguments
 
@@ -252,6 +252,16 @@ Tell superagent-cache whether to perform an ajax call if the generated cache key
 
 * bool: boolean, default: true
 
+## .backgroundRefresh(value)
+
+> See the [Using Background Refresh](#using-background-refresh) section for more information.
+
+Tell the underlying `cache` provided in the `require` command to enable background refresh for the generated key and value. If a function is provided, it will use the function, if a boolean is provided, it will use the boolean, if nothing is provided, it will default to true.
+
+#### Arguments
+
+* value: boolean || function || undefined, default: true
+
 ## ._end(callback (err, response))
 
 This is a convenience method that allows you to skip all caching logic and use superagent as normal.
@@ -268,6 +278,77 @@ This is the second constructor param you handed in when you instantiated `supera
 
 ```javascript
 superagent.cache... //You can call any function existing on the cache you passed in
+```
+
+# Using Background Refresh
+
+With a typical cache setup, you're left to find the perfect compromise between having a long expiration so that users don't have to suffer through the worst case load time, and a short expiration so data doesn't get stale. `superagent-cache` eliminates the need to worry about users suffering through the longest wait time by automatically refreshing keys for you.
+
+#### How do I turn it on?
+
+By default, background refresh is off. It will turn itself on the first time you use the `.backgroundRefresh)` chainable.
+
+#### Setup
+
+`superagent-cache` relies on the background refresh feature of the `cache` param you pass into the `require` command. When you use the `.backgroundRefresh()` chainable, `superagent-cache` passes the provided value into `cache`. This means that if you're using `cache-service`, you almost certainly want `cache-service`'s `writeToVolatileCaches` property set to `true` (it defaults to `true`) so that the data set by background refresh will propogate forward to earlier caches (`cache-service` ONLY background refreshses to the final cache passed to it)
+
+#### Configure
+
+If desired, configure the following properties within `cache`:
+
+* `backgroundRefreshInterval`
+* `backgroundRefreshMinTtl`
+* `backgroundRefreshIntervalCheck`
+
+#### Use
+
+Background refresh is exposed via the `.backgroundRefresh()` chainable.
+
+When `true` or no param is passed to `.backgroundRefresh()`, it will generate a `superagent` call identical to the one that triggered it and pass that to `cache`.
+
+```javascript
+superagent
+  .get(uri)
+  .backgroundRefresh()
+  .end(function (err, response){
+    //Response will no be refreshed in the background
+  }
+);
+```
+
+When a function is passed, it will use that function. Read on for background refresh function requirements.
+
+```javascript
+var refresh = function(key, cb){
+  var response = goGetData();
+  cb(null, response);
+}
+
+superagent
+  .get(uri)
+  .backgroundRefresh(refresh)
+  .end(function (err, response){
+    //Response will no be refreshed in the background
+  }
+);
+```
+
+When `false` is passed, it will do nothing.
+
+#### The Refresh Param
+
+###### refresh(key, cb(err, response))
+
+* key: type: string: this is the key that is being refreshed
+* cb: type: function: you must trigger this function to pass the data that should replace the current key's value
+
+The `refresh` param MUST be a function that accepts `key` and a callback function that accepts `err` and `response` as follows:
+
+```javascript
+var refresh = function(key, cb){
+  var response = goGetData();
+  cb(null, response);
+}
 ```
 
 # More Usage Examples
@@ -324,13 +405,3 @@ var superagent = require('superagent-cache')(null, redisCache);
 #### 0.2.0
 
 * `superagent-cache` is now more flexible, allowing usage of any cache that matches `cache-service`'s API. To make it lighter, then, the hard dependency on `cache-service` was replaced with the much lighter `cacheModule`. As a result, `superagent-cache` can no longer construct a `cache-service` instance for you. If you wish to use `cache-service`, you must instantiate it externally and hand it in as `cache`--the second param in the `require` command.
-
-# Roadmap
-
-* ~~Make it so superagent-cache's `.end()` callback function does not require an `err` param~~
-* ~~Make sure that `resetProps()` gets called when `._end()` is called directly~~
-* ~~Add unit tests for the various ways headers can be added to calls~~
-* ~~Add the 'More Usage Examples' section~~
-* ~~Remove the hard dependency on `superagent-cache` and allow users to use any cache that matched `superagent-cache`'s API~~
-* Add unit tests for the other points above
-* Add thorough comments and param descriptions to the code
