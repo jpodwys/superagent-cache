@@ -405,13 +405,3 @@ var superagent = require('superagent-cache')(null, redisCache);
 #### 0.2.0
 
 * `superagent-cache` is now more flexible, allowing usage of any cache that matches `cache-service`'s API. To make it lighter, then, the hard dependency on `cache-service` was replaced with the much lighter `cacheModule`. As a result, `superagent-cache` can no longer construct a `cache-service` instance for you. If you wish to use `cache-service`, you must instantiate it externally and hand it in as `cache`--the second param in the `require` command.
-
-# Roadmap
-
-* ~~Make it so superagent-cache's `.end()` callback function does not require an `err` param~~
-* ~~Make sure that `resetProps()` gets called when `._end()` is called directly~~
-* ~~Add unit tests for the various ways headers can be added to calls~~
-* ~~Add the 'More Usage Examples' section~~
-* ~~Remove the hard dependency on `superagent-cache` and allow users to use any cache that matched `superagent-cache`'s API~~
-* Add unit tests for the other points above
-* Add thorough comments and param descriptions to the code
