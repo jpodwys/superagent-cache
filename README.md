@@ -311,7 +311,7 @@ superagent
   .get(uri)
   .backgroundRefresh()
   .end(function (err, response){
-    //Response will no be refreshed in the background
+    //Response will now be refreshed in the background
   }
 );
 ```
