@@ -65,7 +65,7 @@ If you find yourself occasionally needing more than this, try out the `.prune()`
 
 # Where does superagent-cache store data?
 
-By default, `superagent-cache` stores data in a bundled instance of [cacheModule](https://github.com/jpodwys/cache-service-cache-module), but it can natively handle any cache that matches [cache-service](https://github.com/fs-webdev/cache-service)'s API. See this list of [supported caches](#supported-cached) to see what works best with your use case. Because `cache-service` and all of the supported caches have identical APIs, `superagent-cache` doesn't care which you use, so pick the one that's best for you or make a new one.
+By default, `superagent-cache` stores data in a bundled instance of [cacheModule](https://github.com/jpodwys/cache-service-cache-module), but it can natively handle any cache that matches [cache-service](https://github.com/jpodwys/cache-service)'s API. See this list of [supported caches](#supported-caches) to see what works best with your use case. Because `cache-service` and all of the supported caches have identical APIs, `superagent-cache` doesn't care which you use, so pick the one that's best for you or make a new one.
 
 # What Does the Default Configuration Give Me?
 
