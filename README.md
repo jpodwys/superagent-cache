@@ -388,7 +388,7 @@ var superagent = require('superagent-cache')();
 ```javascript
 //...it will patch the provided superagent and create a cacheModule instance (see 'default configuration')
 var superagent = require('superagent');
-require('superagent-cache)(superagent)
+require('superagent-cache')(superagent)
 ```
 
 #### When only `cache` is passed
