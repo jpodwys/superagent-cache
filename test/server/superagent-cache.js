@@ -37,34 +37,6 @@ app.get('/options', function(req, res){
 
 app.listen(3000);
 
-/*
-
-Custom API items to test:
-
-  TEST THAT I CAN PASS IN BOTH A cache-service INSTANCE AS WELL AS A CONFIG THAT WILL BECOME A cache-service INSTANCE
-
-  cache-service level api
-    chainable
-      superagent functions
-        .get() should cache                                                         done
-        .post() should not cache                                                    done
-        .put() should invalidate cache                                              done
-        .del() should invalidate cache                                              done
-      custom
-        ._end() should not cache                                                    done
-        .responseProp() should chop response                                        done
-        .prune() should prune response                                              done
-        .pruneParams() should generate a cache key without certain params           done
-        .pruneOptions() should generate a cache key without certain options         done
-        .expiration() should override all caches' defaultExpirations                done
-        .cacheWhenEmpty() should cache when response is empty                       done
-        .doQuery() should allow users to skip querying but still check all caches   done
-      other
-        .end() callback err param is optional                                       done
-        various means of adding headers all resolve the same way in the cache key   done
-
-*/
-
 describe('Array', function(){
 
   beforeEach(function(){
@@ -236,6 +208,16 @@ describe('Array', function(){
       );
     });
 
+    it('.end() should not set \'err\' callback param on error', function (done) {
+      superagent
+        .get('localhost:3000/invalid')
+        .end(function (err, response){
+          expect(err).toExist();
+          done();
+        }
+      );
+    });
+
   });
 
   describe('superagentCache caching tests', function () {
@@ -319,19 +301,6 @@ describe('Array', function(){
           });
         }
       );
-    });
-
-    describe('when response is not valid', function() {
-
-      it('.end() should not set \'err\' callback param on error', function (done) {
-        superagent
-          .get('localhost:3000/invalid')
-          .end(function (err, response){
-            expect(err).toExist();
-            done();
-          }
-        );
-      });
     });
 
   });
