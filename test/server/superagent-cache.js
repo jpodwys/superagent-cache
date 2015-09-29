@@ -4,9 +4,9 @@ var superagent = require('superagent');
 var cModule = require('cache-service-cache-module');
 var cacheModule = new cModule({backgroundRefreshInterval: 500});
 require('../../superagentCache')(superagent, cacheModule);
- 
+
 var app = express();
- 
+
 app.get('/one', function(req, res){
   res.send(200, {key: 'one'});
 });
@@ -239,7 +239,7 @@ describe('Array', function(){
   });
 
   describe('superagentCache caching tests', function () {
-    
+
     it('.get() ._end() should bypass all caching logic', function (done) {
       superagent
         .get('localhost:3000/one')
@@ -321,10 +321,23 @@ describe('Array', function(){
       );
     });
 
+    describe('when response is not valid', function() {
+
+      it('.end() should not set \'err\' callback param on error', function (done) {
+        superagent
+          .get('localhost:3000/invalid')
+          .end(function (err, response){
+            expect(err).toExist();
+            done();
+          }
+        );
+      });
+    });
+
   });
 
   describe('superagentCache background refresh tests', function () {
-    
+
     it('.get() .expiration() .end() background refresh should not work if the chainable is not used', function (done) {
       superagent
         .get('localhost:3000/one')

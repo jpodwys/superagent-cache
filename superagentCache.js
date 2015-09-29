@@ -123,6 +123,10 @@ module.exports = function(agent, cache){
           else{
             if(curProps.doQuery){
               _this._end(function (err, response){
+                if (err) {
+                  return callbackExecutor(cb, err, response, key);
+                }
+
                 if(!err && response){
                   if(curProps.prune){
                     response = curProps.prune(response);
@@ -156,6 +160,10 @@ module.exports = function(agent, cache){
       }
       else{
         this._end(function (err, response){
+          if (err) {
+            return callbackExecutor(cb, err, response, key);
+          }
+
           if(!err && response){
             superagent.cache.del(key, function (){
               callbackExecutor(cb, err, response, key);
