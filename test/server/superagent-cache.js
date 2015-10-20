@@ -4,6 +4,7 @@ var superagent = require('superagent');
 var cModule = require('cache-service-cache-module');
 var cacheModule = new cModule({backgroundRefreshInterval: 500});
 require('../../superagentCache')(superagent, cacheModule);
+require('../../superagentCache')(superagent, cacheModule);
 
 var app = express();
 
