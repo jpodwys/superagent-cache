@@ -8,19 +8,20 @@ module.exports = function(agent, cache){
 
   var superagent = (agent) ? agent : require('superagent');
   
-  if(!superagent.cache){
+  if(cache){
+    superagent.cache = cache;
+  }
+  else{
+    var cModule = require('cache-service-cache-module');
+    superagent.cache = new cModule();
+  }
+
+  if(!superagent.patchedBySuperagentCache){
     var Request = superagent.Request;
     var props = {doQuery: true, cacheWhenEmpty: true};
     var supportedMethods = ['GET', 'HEAD', 'PUT', 'DELETE'];
     var cacheableMethods = ['GET', 'HEAD'];
-
-    if(cache){
-      superagent.cache = cache;
-    }
-    else{
-      var cModule = require('cache-service-cache-module');
-      superagent.cache = new cModule();
-    }
+    superagent.patchedBySuperagentCache = true;
 
     /**
      * Whether to execute an http query if the cache does not have the generated key
