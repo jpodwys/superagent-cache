@@ -7,7 +7,7 @@
 module.exports = function(agent, cache){
 
   var superagent = (agent) ? agent : require('superagent');
-  
+
   if(cache){
     superagent.cache = cache;
   }
@@ -121,6 +121,7 @@ module.exports = function(agent, cache){
         if(~cacheableMethods.indexOf(this.method)){
           superagent.cache.get(key, function (err, response){
             if(!err && response){
+              _this.abort();
               callbackExecutor(cb, err, response, key);
             }
             else{
