@@ -4,21 +4,15 @@
  * @param {superagent instance} agent (optional)
  * @param {cache module} cache (optional)
  */
-module.exports = function(agent, cache){
+module.exports = function(agent, cache, defaults){
 
   var superagent = (agent) ? agent : require('superagent');
 
-  if(cache){
-    superagent.cache = cache;
-  }
-  else{
-    var cModule = require('cache-service-cache-module');
-    superagent.cache = new cModule();
-  }
-
   if(!superagent.patchedBySuperagentCache){
+    superagent.cache = (cache) ? cache : new require('cache-service-cache-module')();
+    defaults = defaults || {};
     var Request = superagent.Request;
-    var props = {doQuery: true, cacheWhenEmpty: true};
+    var props = resetProps();
     var supportedMethods = ['GET', 'HEAD', 'PUT', 'DELETE'];
     var cacheableMethods = ['GET', 'HEAD'];
     superagent.patchedBySuperagentCache = true;
@@ -104,7 +98,7 @@ module.exports = function(agent, cache){
      * Wraps the .end function so that .resetProps gets called--callable so that no caching logic takes place
      */
     Request.prototype._end = function(cb){
-      resetProps();
+      props = resetProps();
       this.execute(cb);
     }
 
@@ -114,7 +108,7 @@ module.exports = function(agent, cache){
      */
     Request.prototype.end = function(cb){
       var curProps = props;
-      resetProps();
+      props = resetProps();
       if(~supportedMethods.indexOf(this.method)){
         var _this = this;
         var key = keygen(this, curProps);
@@ -314,7 +308,16 @@ module.exports = function(agent, cache){
      * Reset superagent-cache's default query properties
      */
     function resetProps(){
-      props = {doQuery: true, cacheWhenEmpty: true};
+      return {
+        doQuery: (typeof defaults.doQuery === 'boolean') ? defaults.doQuery : true,
+        cacheWhenEmpty: (typeof defaults.cacheWhenEmpty === 'boolean') ? defaults.cacheWhenEmpty : true,
+        prune: defaults.prune,
+        pruneParams: defaults.pruneParams,
+        pruneOptions: defaults.pruneOptions,
+        responseProp: defaults.responseProp,
+        expiration: defaults.expiration,
+        backgroundRefresh: defaults.backgroundRefresh
+      };
     }
 
     /**

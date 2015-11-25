@@ -4,12 +4,17 @@ var superagent = require('superagent');
 var cModule = require('cache-service-cache-module');
 var cacheModule = new cModule({backgroundRefreshInterval: 500});
 require('../../superagentCache')(superagent, cacheModule);
+//To make sure requiring a second time won't break anything
 require('../../superagentCache')(superagent, cacheModule);
 
 var app = express();
 
 app.get('/one', function(req, res){
   res.send(200, {key: 'one'});
+});
+
+app.get('/four', function(req, res){
+  res.send(400, {key: 'one'});
 });
 
 app.post('/one', function(req, res){
@@ -38,7 +43,7 @@ app.get('/options', function(req, res){
 
 app.listen(3000);
 
-describe('Array', function(){
+describe('superagentCache tests', function(){
 
   beforeEach(function(){
     superagent.cache.flush();
@@ -219,6 +224,37 @@ describe('Array', function(){
       );
     });
 
+    it('.get() .cacheWhenEmpty(false) .prune(function) should only cache responses with status code 2xx', function (done) {
+      var prune = function(r){
+        if(r && r.statusCode && r.statusCode.toString()[0] === '2'){
+          return r.statusCode;
+        }
+        return null;
+      }
+
+      superagent
+        .get('localhost:3000/four')
+        .cacheWhenEmpty(false)
+        .prune(prune)
+        .end(function (err, response, key) {
+          superagent.cache.get(key, function (err, response){
+            expect(response).toBe(null);
+            superagent
+              .get('localhost:3000/one')
+              .cacheWhenEmpty(false)
+              .prune(prune)
+              .end(function (err, response, key) {
+                superagent.cache.get(key, function (err, response){
+                  expect(response).toBe(200);
+                  done();
+                });
+              }
+            );
+          });
+        }
+      );
+    });
+
   });
 
   describe('superagentCache caching tests', function () {
@@ -343,7 +379,7 @@ describe('Array', function(){
       );
     });
 
-    it('.get() .query(string&string) .expiration() .end() background refresh should not work if the chainable is not used', function (done) {
+    it('.get() .query(string&string) .end() background refresh should not work if the chainable is not used', function (done) {
       superagent
         .get('localhost:3000/params')
         .query('pruneParams=true&otherParams=false')
@@ -363,7 +399,7 @@ describe('Array', function(){
       );
     });
 
-    it('.get() .query(string&string) .expiration() .backgroundRefresh(true) .end() background refresh should refresh a key shortly before expiration', function (done) {
+    it('.get() .query(string&string) .backgroundRefresh(true) .end() background refresh should refresh a key shortly before expiration', function (done) {
       superagent
         .get('localhost:3000/params')
         .query('pruneParams=true&otherParams=false')
@@ -427,6 +463,46 @@ describe('Array', function(){
               done();
             });
           }, 1500);
+        }
+      );
+    });
+
+  });
+
+  describe('superagentCache configurability tests', function () {
+
+    it('Should be able to configure some global settings', function (done) {
+      //delete superagent;
+      delete require.cache[superagentModuleName];
+      var superagent = require('superagent');
+      require('../../superagentCache')(superagent, cacheModule, {doQuery: false});
+      superagent
+        .get('localhost:3000/one')
+        .end(function (err, response, key){
+          superagent.cache.get(key, function (err, response) {
+            //console.log('RESPONSE', response);
+            expect(response).toBe(null);
+            done();
+          });
+        }
+      );
+    });
+
+    it('Global settings should be locally overwritten by chainables', function (done) {
+      //delete superagent;
+      delete require.cache[superagentModuleName];
+      var superagent = require('superagent');
+      require('../../superagentCache')(superagent, cacheModule, {doQuery: false});
+      superagent
+        .get('localhost:3000/one')
+        .doQuery(true)
+        .end(function (err, response, key){
+          superagent.cache.get(key, function (err, response) {
+            //console.log('RESPONSE', response);
+            expect(response).toNotBe(null);
+            expect(response.body.key).toBe('one');
+            done();
+          });
         }
       );
     });
