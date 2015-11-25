@@ -470,17 +470,16 @@ describe('superagentCache tests', function(){
   });
 
   describe('superagentCache configurability tests', function () {
+    //Necessary to eliminate the superagent singleton so we can create another with a defaults object
+    delete require.cache[require.resolve('superagent')];
+    var superagent = require('superagent');
+    require('../../superagentCache')(superagent, cacheModule, {doQuery: false});
 
     it('Should be able to configure some global settings', function (done) {
-      //delete superagent;
-      delete require.cache[superagentModuleName];
-      var superagent = require('superagent');
-      require('../../superagentCache')(superagent, cacheModule, {doQuery: false});
       superagent
         .get('localhost:3000/one')
         .end(function (err, response, key){
           superagent.cache.get(key, function (err, response) {
-            //console.log('RESPONSE', response);
             expect(response).toBe(null);
             done();
           });
@@ -489,16 +488,11 @@ describe('superagentCache tests', function(){
     });
 
     it('Global settings should be locally overwritten by chainables', function (done) {
-      //delete superagent;
-      delete require.cache[superagentModuleName];
-      var superagent = require('superagent');
-      require('../../superagentCache')(superagent, cacheModule, {doQuery: false});
       superagent
         .get('localhost:3000/one')
         .doQuery(true)
         .end(function (err, response, key){
           superagent.cache.get(key, function (err, response) {
-            //console.log('RESPONSE', response);
             expect(response).toNotBe(null);
             expect(response.body.key).toBe('one');
             done();
