@@ -90,7 +90,7 @@ This example allows you to provide your own instance of `superagent` to be patch
 
 All data passed in the `defaults` object will apply to all queryies made with superagent-cache unless overwritten with chainables. See the [Available Configuration Options](#available-configuration-options) section for a list of all options you can pass.
 
-For more information on `require` command params usage, see [this section](#various-ways-of-requiring-superagentcache) (this section does not speak at all about the `defaults` param).
+For more information on `require` command params usage, see [this section](#various-ways-of-requiring-superagentcache).
 
 # Available Configuration Options
 
@@ -415,6 +415,10 @@ var redisModule = require('cache-service-redis');
 var redisCache = new redisModule({redisEnv: 'REDISCLOUD_URL'});
 var superagent = require('superagent-cache')(null, redisCache);
 ```
+
+#### With `defaults`
+
+The `defaults` object can be passed as the third param at any time. It does not affect the `superagent` or `cache` params. You can see a brief demo [here](#how-do-i-use-a-custom-configuration) and a list of all the options you can pass in the `defaults` object [here](#available-configuration-options).
 
 # Breaking Change History
 
