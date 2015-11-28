@@ -90,7 +90,7 @@ This example allows you to provide your own instance of `superagent` to be patch
 
 All data passed in the `defaults` object will apply to all queryies made with superagent-cache unless overwritten with chainables. See the [Available Configuration Options](#available-configuration-options) section for a list of all options you can pass.
 
-For more information on `require` command params usage, see [this section](#various-ways-of-requiring-superagentcache).
+For more information on `require` command params usage, see [this section](#various-ways-of-requiring-superagent-cache).
 
 # Available Configuration Options
 
