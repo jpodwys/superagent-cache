@@ -88,7 +88,7 @@ require('superagent-cache')(superagent, redisCache, defaults);
 
 This example allows you to provide your own instance of `superagent` to be patched as well as allowing you to pass in your own, pre-instantiated cache and some defaults for superagent-cache to use with all queries. Here's a list of [supported caches](#supported-caches).
 
-All data passed in the `defaults` object will apply to all queryies made with superagent-cache unless overwritten with chainables. See the [Available Configuration Options](#available-configuration-options) section for a list of all options you can pass.
+All data passed in the `defaults` object will apply to all queries made with superagent-cache unless overwritten with chainables. See the [Available Configuration Options](#available-configuration-options) section for a list of all options you can pass.
 
 For more information on `require` command params usage, see [this section](#various-ways-of-requiring-superagent-cache).
 
