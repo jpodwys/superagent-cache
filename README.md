@@ -73,7 +73,7 @@ You get the 'default configuration' when you don't provide any params to the `re
 
 # How Do I Use a Custom Configuration?
 
-To use a custom configuraiton, take advantage of the the three optional params you can hand to `superagent-cache`'s [`require` command](#user-content-requiresuperagent-cachesuperagent-cache) as follows:
+To use a custom configuraiton, take advantage of the the three optional params you can hand to `superagent-cache`'s [`require` command](#user-content-requiresuperagent-cachesuperagent-cache) (`superagent`, `cache`, and `defaults`) as follows:
 
 ```javascript
 //Require superagent and the cache module I want
