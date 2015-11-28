@@ -170,9 +170,9 @@ superagent
 );
 ```
 
-## .prune(callback (response))
+## .prune(callback (response, gutFunction))
 
-> Caution: if you use this function, `supergent-cache` [will not gut](#what-exactly-gets-cached) the `response` object for you. Be sure that the result of your `.prune()` callback function will never be circular and is not larger than it needs to be.
+> Caution: if you use this function, `supergent-cache` [will not gut](#what-exactly-gets-cached) the `response` object for you. Be sure that the result of your `.prune()` callback function will never be circular and is not larger than it needs to be. If you are simply checking for the existence of an attribute and still want superagent-cache to gut the response for you, use the `gutFunction` param as shown in example 2 below.
 
 If you need to dig several layers into superagent's response, you can do so by passing a function to `.prune()`. Your prune function will receive superagent's response and should return a truthy value or null. The benefit of using this function is that you can cache only what you need.
 
@@ -183,12 +183,32 @@ If you need to dig several layers into superagent's response, you can do so by p
 #### Example
 
 ```javascript
-var prune = funtion(r){
-  return (r && r.ok && r.body && r.body.user) ? r.body.user : null;
+var prune = function(r, gut){
+  if(r && r.ok && r.body && r.body.user) ? r.body.user : null;
 }
 
 //response will now be replaced with r.body.urer or null
 //and only r.body.user will be cached rather than the entire superagent response
+superagent
+  .get(uri)
+  .prune(prune)
+  .end(function (error, response){
+    // handle response
+  }
+);
+```
+
+#### Example 2
+
+```javascript
+var prune = funtion(r, gut){
+  if(r && r.ok && r.body && r.body.user){
+    return gut(r);
+  }
+  return null;
+}
+
+//response will now be gutted by superagent-cache
 superagent
   .get(uri)
   .prune(prune)

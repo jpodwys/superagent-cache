@@ -473,9 +473,15 @@ describe('superagentCache', function(){
     //Necessary to eliminate the superagent singleton so we can create another with a defaults object
     delete require.cache[require.resolve('superagent')];
     var superagent = require('superagent');
-    require('../../superagentCache')(superagent, cacheModule, {doQuery: false, expiration: 1});
+    var prune = function(r, gut){
+      if(r && r.statusCode && r.statusCode.toString()[0] === '2'){
+        return gut(r);
+      }
+      return null;
+    }
+    require('../../superagentCache')(superagent, cacheModule, {doQuery: false, expiration: 1, prune: prune});
 
-    it('Should be able to configure some global settings: doQuery', function (done) {
+    it('Should be able to configure global settings: doQuery', function (done) {
       superagent
         .get('localhost:3000/one')
         .end(function (err, response, key){
@@ -501,7 +507,7 @@ describe('superagentCache', function(){
       );
     });
 
-    it('Should be able to configure some global settings: expiration', function (done) {
+    it('Should be able to configure global settings: expiration', function (done) {
       superagent
         .get('localhost:3000/one')
         .doQuery(true)
@@ -546,6 +552,19 @@ describe('superagentCache', function(){
                 }
               );
             }, 1000);
+          });
+        }
+      );
+    });
+
+    it('Global settings should be locally overwritten by chainables: prune', function (done) {
+      superagent
+        .get('localhost:3000/four')
+        .doQuery(true)
+        .end(function (err, response, key){
+          superagent.cache.get(key, function (err, response) {
+            expect(response).toBe(null);
+            done();
           });
         }
       );

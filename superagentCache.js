@@ -126,7 +126,7 @@ module.exports = function(agent, cache, defaults){
                   }
                   else if(!err && response){
                     if(curProps.prune){
-                      response = curProps.prune(response);
+                      response = curProps.prune(response, gutResponse);
                     }
                     else if(curProps.responseProp){
                       response = response[curProps.responseProp] || null;
