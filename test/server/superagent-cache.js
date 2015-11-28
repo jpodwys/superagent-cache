@@ -43,13 +43,13 @@ app.get('/options', function(req, res){
 
 app.listen(3000);
 
-describe('superagentCache tests', function(){
+describe('superagentCache', function(){
 
   beforeEach(function(){
     superagent.cache.flush();
   });
 
-  describe('superagentCache API tests', function () {
+  describe('API tests', function () {
 
     it('.end() should not require the \'err\' callback param', function (done) {
       superagent
@@ -257,7 +257,7 @@ describe('superagentCache tests', function(){
 
   });
 
-  describe('superagentCache caching tests', function () {
+  describe('caching tests', function () {
 
     it('.get() ._end() should bypass all caching logic', function (done) {
       superagent
@@ -342,7 +342,7 @@ describe('superagentCache tests', function(){
 
   });
 
-  describe('superagentCache background refresh tests', function () {
+  describe('background refresh tests', function () {
 
     it('.get() .expiration() .end() background refresh should not work if the chainable is not used', function (done) {
       superagent
@@ -469,7 +469,7 @@ describe('superagentCache tests', function(){
 
   });
 
-  describe('superagentCache configurability tests', function () {
+  describe('configurability tests', function () {
     //Necessary to eliminate the superagent singleton so we can create another with a defaults object
     delete require.cache[require.resolve('superagent')];
     var superagent = require('superagent');

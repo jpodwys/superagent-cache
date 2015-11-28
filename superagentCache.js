@@ -358,26 +358,9 @@ module.exports = function(agent, cache, defaults){
       if(cb.length === 1){
         cb(response);
       }
-      else if(cb.length === 2){
-        cb(err, response);
-      }
-      else if(cb.length === 3){
+      else{
         cb(err, response, key);
       }
-      else{
-        throw new exception('UnsupportedCallbackException', 'You must have 1, 2, or 3 callback params in your .end() callback argument list.');
-      }
-    }
-
-    /**
-     * Instantates an exception to be thrown
-     * @param {string} name
-     * @param {string} message
-     * @return {exception}
-     */
-    function exception(name, message){
-      this.name = name;
-      this.message = message;
     }
   }
 
