@@ -473,9 +473,9 @@ describe('superagentCache', function(){
     //Necessary to eliminate the superagent singleton so we can create another with a defaults object
     delete require.cache[require.resolve('superagent')];
     var superagent = require('superagent');
-    require('../../superagentCache')(superagent, cacheModule, {doQuery: false});
+    require('../../superagentCache')(superagent, cacheModule, {doQuery: false, expiration: 1});
 
-    it('Should be able to configure some global settings', function (done) {
+    it('Should be able to configure some global settings: doQuery', function (done) {
       superagent
         .get('localhost:3000/one')
         .end(function (err, response, key){
@@ -487,7 +487,7 @@ describe('superagentCache', function(){
       );
     });
 
-    it('Global settings should be locally overwritten by chainables', function (done) {
+    it('Global settings should be locally overwritten by chainables: doQuery', function (done) {
       superagent
         .get('localhost:3000/one')
         .doQuery(true)
@@ -496,6 +496,56 @@ describe('superagentCache', function(){
             expect(response).toNotBe(null);
             expect(response.body.key).toBe('one');
             done();
+          });
+        }
+      );
+    });
+
+    it('Should be able to configure some global settings: expiration', function (done) {
+      superagent
+        .get('localhost:3000/one')
+        .doQuery(true)
+        .end(function (err, response, key){
+          superagent.cache.get(key, function (err, response) {
+            expect(response).toNotBe(null);
+            expect(response.body.key).toBe('one');
+            setTimeout(function(){
+              superagent
+                .get('localhost:3000/one')
+                .end(function (err, response, key){
+                  superagent.cache.get(key, function (err, response) {
+                    expect(response).toBe(null);
+                    done();
+                  });
+                }
+              );
+            }, 1000);
+          });
+        }
+      );
+    });
+
+    it('Global settings should be locally overwritten by chainables: expiration', function (done) {
+      superagent
+        .get('localhost:3000/one')
+        .doQuery(true)
+        .expiration(2)
+        .end(function (err, response, key){
+          superagent.cache.get(key, function (err, response) {
+            expect(response).toNotBe(null);
+            expect(response.body.key).toBe('one');
+            setTimeout(function(){
+              superagent
+                .get('localhost:3000/one')
+                .end(function (err, response, key){
+                  superagent.cache.get(key, function (err, response) {
+                    expect(response).toNotBe(null);
+                    expect(response.body.key).toBe('one');
+                    done();
+                  });
+                }
+              );
+            }, 1000);
           });
         }
       );
