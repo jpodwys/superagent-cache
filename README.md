@@ -73,21 +73,37 @@ You get the 'default configuration' when you don't provide any params to the `re
 
 # How Do I Use a Custom Configuration?
 
-To use a custom configuraiton, take advantage of the the two optional params you can hand to `superagent-cache`'s [`require` command](#user-content-requiresuperagent-cachesuperagent-cache) as follows:
+To use a custom configuraiton, take advantage of the the three optional params you can hand to `superagent-cache`'s [`require` command](#user-content-requiresuperagent-cachesuperagent-cache) as follows:
 
 ```javascript
 //Require superagent and the cache module I want
 var superagent = require('superagent');
 var redisModule = require('cache-service-redis');
 var redisCache = new redisModule({redisEnv: 'REDISCLOUD_URL'});
+var defaults = {cacheWhenEmpty: false, expiration: 900};
 
 //Patch my superagent instance and pass in my redis cache
-require('superagent-cache')(superagent, redisCache);
+require('superagent-cache')(superagent, redisCache, defaults);
 ```
 
-This example allows you to provide your own instance of `superagent` to be patched as well as allowing you to pass in your own, pre-instantiated cache. Here's a list of [supported caches](#supported-caches).
+This example allows you to provide your own instance of `superagent` to be patched as well as allowing you to pass in your own, pre-instantiated cache and some defaults for superagent-cache to use with all queries. Here's a list of [supported caches](#supported-caches).
 
-For more information on `require` command params usage, see [this section](#various-ways-of-requiring-superagentcache).
+All data passed in the `defaults` object will apply to all queryies made with superagent-cache unless overwritten with chainables. See the [Available Configuration Options](#available-configuration-options) section for a list of all options you can pass.
+
+For more information on `require` command params usage, see [this section](#various-ways-of-requiring-superagentcache) (this section does not speak at all about the `defaults` param).
+
+# Available Configuration Options
+
+All options that can be passed to the `defaults` `require` param can be overwritten with chainables of the same name. All of the below options are detailed in the [API section](#api).
+
+* responseProp
+* prune
+* pruneParams
+* pruneOptions
+* expiration
+* cacheWhenEmpty
+* doQuery
+* backgroundRefresh
 
 # Supported Caches
 
