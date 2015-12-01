@@ -73,21 +73,37 @@ You get the 'default configuration' when you don't provide any params to the `re
 
 # How Do I Use a Custom Configuration?
 
-To use a custom configuraiton, take advantage of the the two optional params you can hand to `superagent-cache`'s [`require` command](#user-content-requiresuperagent-cachesuperagent-cache) as follows:
+To use a custom configuraiton, take advantage of the the three optional params you can hand to `superagent-cache`'s [`require` command](#user-content-requiresuperagent-cachesuperagent-cache) (`superagent`, `cache`, and `defaults`) as follows:
 
 ```javascript
 //Require superagent and the cache module I want
 var superagent = require('superagent');
 var redisModule = require('cache-service-redis');
 var redisCache = new redisModule({redisEnv: 'REDISCLOUD_URL'});
+var defaults = {cacheWhenEmpty: false, expiration: 900};
 
 //Patch my superagent instance and pass in my redis cache
-require('superagent-cache')(superagent, redisCache);
+require('superagent-cache')(superagent, redisCache, defaults);
 ```
 
-This example allows you to provide your own instance of `superagent` to be patched as well as allowing you to pass in your own, pre-instantiated cache. Here's a list of [supported caches](#supported-caches).
+This example allows you to provide your own instance of `superagent` to be patched as well as allowing you to pass in your own, pre-instantiated cache and some defaults for superagent-cache to use with all queries. Here's a list of [supported caches](#supported-caches).
 
-For more information on `require` command params usage, see [this section](#various-ways-of-requiring-superagentcache).
+All data passed in the `defaults` object will apply to all queries made with superagent-cache unless overwritten with chainables. See the [Available Configuration Options](#available-configuration-options) section for a list of all options you can pass.
+
+For more information on `require` command params usage, see [this section](#various-ways-of-requiring-superagent-cache).
+
+# Available Configuration Options
+
+All options that can be passed to the `defaults` `require` param can be overwritten with chainables of the same name. All of the below options are detailed in the [API section](#api).
+
+* responseProp
+* prune
+* pruneParams
+* pruneOptions
+* expiration
+* cacheWhenEmpty
+* doQuery
+* backgroundRefresh
 
 # Supported Caches
 
@@ -154,9 +170,9 @@ superagent
 );
 ```
 
-## .prune(callback (response))
+## .prune(callback (response, gutFunction))
 
-> Caution: if you use this function, `supergent-cache` [will not gut](#what-exactly-gets-cached) the `response` object for you. Be sure that the result of your `.prune()` callback function will never be circular and is not larger than it needs to be.
+> Caution: if you use this function, `supergent-cache` [will not gut](#what-exactly-gets-cached) the `response` object for you. Be sure that the result of your `.prune()` callback function will never be circular and is not larger than it needs to be. If you are simply checking for the existence of an attribute and still want superagent-cache to gut the response for you, use the `gutFunction` param as shown in example 2 below.
 
 If you need to dig several layers into superagent's response, you can do so by passing a function to `.prune()`. Your prune function will receive superagent's response and should return a truthy value or null. The benefit of using this function is that you can cache only what you need.
 
@@ -167,12 +183,32 @@ If you need to dig several layers into superagent's response, you can do so by p
 #### Example
 
 ```javascript
-var prune = funtion(r){
-  return (r && r.ok && r.body && r.body.user) ? r.body.user : null;
+var prune = function(r, gut){
+  if(r && r.ok && r.body && r.body.user) ? r.body.user : null;
 }
 
 //response will now be replaced with r.body.urer or null
 //and only r.body.user will be cached rather than the entire superagent response
+superagent
+  .get(uri)
+  .prune(prune)
+  .end(function (error, response){
+    // handle response
+  }
+);
+```
+
+#### Example 2
+
+```javascript
+var prune = funtion(r, gut){
+  if(r && r.ok && r.body && r.body.user){
+    return gut(r);
+  }
+  return null;
+}
+
+//response will now be gutted by superagent-cache
 superagent
   .get(uri)
   .prune(prune)
@@ -399,6 +435,10 @@ var redisModule = require('cache-service-redis');
 var redisCache = new redisModule({redisEnv: 'REDISCLOUD_URL'});
 var superagent = require('superagent-cache')(null, redisCache);
 ```
+
+#### With `defaults`
+
+The `defaults` object can be passed as the third param at any time. It does not affect the `superagent` or `cache` params. You can see a brief demo [here](#how-do-i-use-a-custom-configuration) and a list of all the options you can pass in the `defaults` object [here](#available-configuration-options).
 
 # Breaking Change History
 
