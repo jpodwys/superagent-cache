@@ -358,8 +358,11 @@ module.exports = function(agent, cache, defaults){
       if(cb.length === 1){
         cb(response);
       }
-      else{
+      else if(cb.length > 1){
         cb(err, response, key);
+      }
+      else{
+        throw new Error('UnsupportedCallbackException: Your .end() callback must pass at least one argument.');
       }
     }
   }
