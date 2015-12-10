@@ -274,9 +274,33 @@ describe('superagentCache', function(){
       superagent
         .post('localhost:3000/one')
         .end(function (err, response, key){
-          expect(typeof key).toBe('undefined');
           expect(response.body.key).toBe('post');
-          done();
+          superagent.cache.get(key, function (err, response) {
+            expect(response).toBe(null);
+            done();
+          });
+        }
+      );
+    });
+
+    it('.get() then .put() should invalidate cache', function (done) {
+      superagent
+        .get('localhost:3000/one')
+        .end(function (err, response, key){
+          expect(response.body.key).toBe('one');
+          superagent.cache.get(key, function (err, response) {
+            expect(response.body.key).toBe('one');
+            superagent
+              .put('localhost:3000/one')
+              .end(function (err, response, key){
+                expect(response.body.key).toBe('put');
+                superagent.cache.get(key, function (err, response) {
+                  expect(response).toBe(null);
+                  done();
+                });
+              }
+            );
+          });
         }
       );
     });
