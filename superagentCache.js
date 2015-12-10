@@ -10,13 +10,13 @@ module.exports = function(agent, cache, defaults){
 
   if(superagent.patchedBySuperagentCache){
     superagent.cache = (cache) ? cache : superagent.cache;
-    defaults = (defaults) ? resetProps(defaults) : null;
+    superagent.defaults = (defaults) ? resetProps(defaults) : superagent.defaults;
   }
   else if(!superagent.patchedBySuperagentCache){
     superagent.cache = (cache) ? cache : new require('cache-service-cache-module')();
-    defaults = defaults || {};
+    superagent.defaults = defaults || {};
     var Request = superagent.Request;
-    var props = resetProps();
+    var props = resetProps(superagent.defaults);
     var supportedMethods = ['GET', 'HEAD', 'PUT', 'DELETE'];
     var cacheableMethods = ['GET', 'HEAD'];
     superagent.patchedBySuperagentCache = true;
@@ -102,7 +102,7 @@ module.exports = function(agent, cache, defaults){
      * Wraps the .end function so that .resetProps gets called--callable so that no caching logic takes place
      */
     Request.prototype._end = function(cb){
-      props = resetProps();
+      props = resetProps(superagent.defaults);
       this.execute(cb);
     }
 
@@ -112,7 +112,7 @@ module.exports = function(agent, cache, defaults){
      */
     Request.prototype.end = function(cb){
       var curProps = props;
-      props = resetProps();
+      props = resetProps(superagent.defaults);
       if(~supportedMethods.indexOf(this.method)){
         var _this = this;
         var key = keygen(this, curProps);
@@ -311,16 +311,16 @@ module.exports = function(agent, cache, defaults){
     /**
      * Reset superagent-cache's default query properties
      */
-    function resetProps(){
+    function resetProps(d){
       return {
-        doQuery: (typeof defaults.doQuery === 'boolean') ? defaults.doQuery : true,
-        cacheWhenEmpty: (typeof defaults.cacheWhenEmpty === 'boolean') ? defaults.cacheWhenEmpty : true,
-        prune: defaults.prune,
-        pruneParams: defaults.pruneParams,
-        pruneOptions: defaults.pruneOptions,
-        responseProp: defaults.responseProp,
-        expiration: defaults.expiration,
-        backgroundRefresh: defaults.backgroundRefresh
+        doQuery: (typeof d.doQuery === 'boolean') ? d.doQuery : true,
+        cacheWhenEmpty: (typeof d.cacheWhenEmpty === 'boolean') ? d.cacheWhenEmpty : true,
+        prune: d.prune,
+        pruneParams: d.pruneParams,
+        pruneOptions: d.pruneOptions,
+        responseProp: d.responseProp,
+        expiration: d.expiration,
+        backgroundRefresh: d.backgroundRefresh
       };
     }
 
