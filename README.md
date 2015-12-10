@@ -288,12 +288,22 @@ This is a convenience method that allows you to skip all caching logic and use s
 
 ## .cache
 
-This is the second constructor param you handed in when you instantiated `superagent-cache`. If you didn't provide one, then it's an instance of `cacheModule`.
+This is the second constructor param you handed in when you instantiated `superagent-cache`. If you didn't provide one, then it's an instance of `cacheModule`. You can assign it or call functions on it at runtime.
 
 #### Example
 
 ```javascript
 superagent.cache... //You can call any function existing on the cache you passed in
+```
+
+## .defaults
+
+This is the third constructor param you handed in when you instantiated `superagent-cache`. If you didn't provide one, then it uses the internal defaults. You can assign it or update it at runtime.
+
+#### Example
+
+```javascript
+superagent.defaults... //You can call any function existing on the cache you passed in
 ```
 
 # Using Background Refresh
