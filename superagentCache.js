@@ -8,11 +8,7 @@ module.exports = function(agent, cache, defaults){
 
   var superagent = (agent) ? agent : require('superagent');
 
-  if(superagent.patchedBySuperagentCache){
-    superagent.cache = (cache) ? cache : superagent.cache;
-    superagent.defaults = (defaults) ? resetProps(defaults) : superagent.defaults;
-  }
-  else if(!superagent.patchedBySuperagentCache){
+  if(!superagent.patchedBySuperagentCache){
     superagent.cache = (cache) ? cache : new require('cache-service-cache-module')();
     superagent.defaults = defaults || {};
     var Request = superagent.Request;
