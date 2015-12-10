@@ -259,6 +259,19 @@ describe('superagentCache', function(){
 
   describe('caching tests', function () {
 
+    it('.get() .end() should retrieve and cache response', function (done) {
+      superagent
+        .get('localhost:3000/one')
+        .end(function (err, response, key){
+          expect(response.body.key).toBe('one');
+          superagent.cache.get(key, function (err, response){
+            expect(response.body.key).toBe('one');
+            done();
+          });
+        }
+      );
+    });
+
     it('.get() ._end() should bypass all caching logic', function (done) {
       superagent
         .get('localhost:3000/one')
@@ -305,20 +318,7 @@ describe('superagentCache', function(){
       );
     });
 
-    it('.get() .end() should retrieve and cache response', function (done) {
-      superagent
-        .get('localhost:3000/one')
-        .end(function (err, response, key){
-          expect(response.body.key).toBe('one');
-          superagent.cache.get(key, function (err, response){
-            expect(response.body.key).toBe('one');
-            done();
-          });
-        }
-      );
-    });
-
-    it('.put() .end() should invalidate the generated cache key', function (done) {
+    it('.get() then .del() should invalidate the generated cache key', function (done) {
       superagent
         .get('localhost:3000/one')
         .end(function (err, response, key){
@@ -326,33 +326,9 @@ describe('superagentCache', function(){
           superagent.cache.get(key, function (err, response){
             expect(response.body.key).toBe('one');
             superagent
-              .put('localhost:3000/one')
+              .del('localhost:3000/one')
               .end(function (err, response, key){
-                expect(typeof key).toBe('string');
-                expect(response.body.key).toBe('put');
-                superagent.cache.get(key, function (err, response){
-                  expect(response).toBe(null);
-                  done();
-                });
-              }
-            );
-          });
-        }
-      );
-    });
-
-    it('.del() .end() should invalidate the generated cache key', function (done) {
-      superagent
-        .get('localhost:3000/one')
-        .end(function (err, response, key){
-          expect(response.body.key).toBe('one');
-          superagent.cache.get(key, function (err, response){
-            expect(response.body.key).toBe('one');
-            superagent
-              .put('localhost:3000/one')
-              .end(function (err, response, key){
-                expect(typeof key).toBe('string');
-                expect(response.body.key).toBe('put');
+                expect(response.body.key).toBe('delete');
                 superagent.cache.get(key, function (err, response){
                   expect(response).toBe(null);
                   done();
