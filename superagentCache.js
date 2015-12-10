@@ -19,7 +19,7 @@ module.exports = function(agent, cache){
   if(!superagent.patchedBySuperagentCache){
     var Request = superagent.Request;
     var props = {doQuery: true, cacheWhenEmpty: true};
-    var supportedMethods = ['GET', 'HEAD', 'PUT', 'DELETE'];
+    var supportedMethods = ['GET', 'HEAD', 'POST', 'PUT', 'DELETE'];
     var cacheableMethods = ['GET', 'HEAD'];
     superagent.patchedBySuperagentCache = true;
 
@@ -167,7 +167,9 @@ module.exports = function(agent, cache){
             }
 
             if(!err && response){
-              superagent.cache.del(key, function (){
+              var keyGet = key.replace('"method":"' + _this.method + '"', '"method":"GET"');
+              var keyHead = key.replace('"method":"' + _this.method + '"', '"method":"HEAD"');
+              superagent.cache.del([keyGet, keyHead], function (){
                 callbackExecutor(cb, err, response, key);
               });
             }
