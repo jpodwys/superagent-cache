@@ -193,11 +193,8 @@ module.exports = function(agent, cache, defaults){
     function keygen(req, cProps){
       var cleanParams = null;
       var cleanOptions = null;
-      var params = !isEmpty(req.qs) ? req.qs : arrayToObj(req.qsRaw);
-      if(!params && req.req){
-        params = stringToObj(req.req.path);
-      }
-      var options = (req.req && req.req._headers) ? req.req._headers : null;
+      var params = getQueryParams(req);
+      var options = getHeaderOptions(req);
       if(cProps.pruneParams || cProps.pruneOptions){
         cleanParams = (cProps.pruneParams) ? pruneObj(cloneObject(params), cProps.pruneParams) : params;
         cleanOptions = (cProps.pruneOptions) ? pruneObj(cloneObject(options), cProps.pruneOptions, true) : options;
@@ -209,6 +206,32 @@ module.exports = function(agent, cache, defaults){
         params: cleanParams || params || null,
         options: cleanOptions || options || null
       });
+    }
+
+    function getQueryParams(req){
+      if(req.qs && !isEmpty(req.qs)){
+        return req.qs;
+      }
+      else if(req.qsRaw){
+        return arrayToObj(req.qsRaw);
+      }
+      else if(req.req){
+        return stringToObj(req.req.path);
+      }
+      else if(req._query){
+        return stringToObj(req._query.join('&'));
+      }
+      return null;
+    }
+
+    function getHeaderOptions(req){
+      if(req.req && req.req._headers){
+        return req.req._headers;
+      }
+      else if(req._header){
+        return req._header;
+      }
+      return null;
     }
 
     /**
@@ -307,7 +330,8 @@ module.exports = function(agent, cache, defaults){
     }
 
     /**
-     * Reset superagent-cache's default query properties
+     * Reset superagent-cache's default query properties using the options defaults object
+     * @param {object} d
      */
     function resetProps(d){
       return {
