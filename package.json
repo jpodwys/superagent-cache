@@ -4,7 +4,7 @@
   "description": "Superagent with flexible built-in caching.",
   "main": "superagentCache.js",
   "dependencies": {
-    "superagent": "1.1.0",
+    "superagent": "1.5.0",
     "cache-service-cache-module": "1.1.1"
   },
   "devDependencies": {
