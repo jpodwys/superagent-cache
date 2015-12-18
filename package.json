@@ -4,13 +4,13 @@
   "description": "Superagent with flexible built-in caching.",
   "main": "superagentCache.js",
   "dependencies": {
-    "superagent": "1.5.0",
+    "superagent": "1.6.1",
     "cache-service-cache-module": "1.1.1"
   },
   "devDependencies": {
     "mocha": "1.13.0",
     "expect": "1.6.0",
-    "express": "~3.4.3"
+    "express": "3.4.3"
   },
   "scripts": {
     "test": "bin/tests"

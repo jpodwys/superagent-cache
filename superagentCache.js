@@ -1,15 +1,18 @@
 /**
  * superagentCache constructor
  * @constructor
- * @param {superagent instance} agent (optional)
+ * @param {superagent} agent (optional)
  * @param {cache module} cache (optional)
+ * @param {object} defaults (optional)
+ * @param {object} cacheConfig (optional)
  */
-module.exports = function(agent, cache, defaults){
+module.exports = function(agent, cache, defaults, cacheConfig){
 
   var superagent = (agent) ? agent : require('superagent');
 
   if(!superagent.patchedBySuperagentCache){
-    superagent.cache = (cache) ? cache : new (require('cache-service-cache-module'))();
+    cacheConfig = cacheConfig || {};
+    superagent.cache = (cache) ? cache : new (require('cache-service-cache-module'))(cacheConfig);
     superagent.defaults = defaults || {};
     var Request = superagent.Request;
     var props = resetProps(superagent.defaults);
