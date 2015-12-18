@@ -159,10 +159,9 @@ module.exports = function(agent, cache, defaults, cacheConfig){
         }
         else{
           this._end(function (err, response){
-            if (err) {
+            if(err){
               return callbackExecutor(cb, err, response, key);
             }
-
             if(!err && response){
               var keyGet = key.replace('"method":"' + _this.method + '"', '"method":"GET"');
               var keyHead = key.replace('"method":"' + _this.method + '"', '"method":"HEAD"');
