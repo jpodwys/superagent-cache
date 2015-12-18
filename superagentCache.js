@@ -115,7 +115,6 @@ module.exports = function(agent, cache, defaults){
         if(~cacheableMethods.indexOf(this.method)){
           superagent.cache.get(key, function (err, response){
             if(!err && response){
-              _this.abort();
               callbackExecutor(cb, err, response, key);
             }
             else{
