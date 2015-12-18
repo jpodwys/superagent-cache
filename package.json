@@ -5,12 +5,13 @@
   "main": "superagentCache.js",
   "dependencies": {
     "superagent": "1.6.1",
-    "cache-service-cache-module": "1.1.1"
+    "cache-service-cache-module": "https://github.com/jpodwys/cache-service-cache-module#browser-storage"
   },
   "devDependencies": {
     "mocha": "1.13.0",
     "expect": "1.6.0",
-    "express": "3.4.3"
+    "express": "3.4.3",
+    "mock-localstorage": "0.1.3"
   },
   "scripts": {
     "test": "bin/tests"
