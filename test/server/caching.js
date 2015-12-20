@@ -62,7 +62,7 @@ function checkBrowserStorage(key, value, cb){
   }, 1);
 }
 
-describe.only('superagentCache', function(){
+describe('superagentCache', function(){
 
   beforeEach(function(){
     superagent.cache.flush();
