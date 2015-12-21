@@ -5,7 +5,7 @@
   "main": "superagentCache.js",
   "dependencies": {
     "superagent": "1.6.1",
-    "cache-service-cache-module": "https://github.com/jpodwys/cache-service-cache-module#browser-storage"
+    "cache-service-cache-module": "1.2.0"
   },
   "devDependencies": {
     "mocha": "1.13.0",
