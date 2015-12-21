@@ -208,26 +208,26 @@ module.exports = function(agent, cache, defaults){
     }
 
     function getQueryParams(req){
-      if(req.qs && !isEmpty(req.qs)){
+      if(req && req.qs && !isEmpty(req.qs)){
         return req.qs;
       }
-      else if(req.qsRaw){
+      else if(req && req.qsRaw){
         return arrayToObj(req.qsRaw);
       }
-      else if(req.req){
+      else if(req && req.req){
         return stringToObj(req.req.path);
       }
-      else if(req._query){
+      else if(req && req._query){
         return stringToObj(req._query.join('&'));
       }
       return null;
     }
 
     function getHeaderOptions(req){
-      if(req.req && req.req._headers){
+      if(req && req.req && req.req._headers){
         return req.req._headers;
       }
-      else if(req._header){
+      else if(req && req._header){
         return req._header;
       }
       return null;
