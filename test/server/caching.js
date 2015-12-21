@@ -8,9 +8,9 @@ var cModule = require('cache-service-cache-module');
 var mockStorage = require('mock-localstorage');
 var storageMock = new mockStorage();
 //var cacheModule = new cModule({backgroundRefreshInterval: 500});
-require('../../superagentCache')(superagent, null, null, {backgroundRefreshInterval: 500, storageMock: storageMock});
+require('../../superagentCache')(superagent, {backgroundRefreshInterval: 500, storageMock: storageMock}, null);
 //To make sure requiring a second time won't break anything
-require('../../superagentCache')(superagent, null, null, {backgroundRefreshInterval: 500, storageMock: storageMock});
+require('../../superagentCache')(superagent, {backgroundRefreshInterval: 500, storageMock: storageMock}, null);
 
 var app = express();
 
