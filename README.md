@@ -10,7 +10,7 @@ Require and instantiate superagent-cache as follows to get the [default configur
 ```javascript
 var superagent = require('superagent-cache')();
 ```
-Now you're ready for the magic! All of your existing `GET` and `HEAD` requests will be cached with no extra bloat in your queries! Any matching `DELETE` or `PUT` requests will automatically invalidate the associated cache key and value.
+Now you're ready for the magic! All of your existing `GET` and `HEAD` requests will be cached with no extra bloat in your queries! Any matching `DELETE`, `POST`,  or `PUT` requests will automatically invalidate the associated cache key and value.
 ```javascript
 superagent
   .get(uri)
@@ -88,6 +88,8 @@ require('superagent-cache')(superagent, redisCache, defaults);
 
 This example allows you to provide your own instance of `superagent` to be patched as well as allowing you to pass in your own, pre-instantiated cache and some defaults for superagent-cache to use with all queries. Here's a list of [supported caches](#supported-caches).
 
+The `cache` param can be either a pre-instantiated cache module, or a [`cacheModuleConfig` object](https://github.com/jpodwys/cache-service-cache-module#cache-module-configuration-options) to be used with superagent-cache's bundled [`cacheModule`](https://github.com/jpodwys/cache-service-cache-module) instance.
+
 All data passed in the `defaults` object will apply to all queries made with superagent-cache unless overwritten with chainables. See the [Available Configuration Options](#available-configuration-options) section for a list of all options you can pass.
 
 For more information on `require` command params usage, see [this section](#various-ways-of-requiring-superagent-cache).
@@ -125,20 +127,21 @@ A super-light in-memory cache for cache-service or standalone use. (This module 
 
 # API
 
-## require('superagent-cache')([superagent, cache])
+## require('superagent-cache')([superagent, cache, defaults])
 
 All params here are optional. If the `superagent` param is empty or falsy, then the require statement will return a brand new, patched instance of superagent.
 
 #### Arguments
 
 * (optional) superagent: an instance of superagent
-* (optional) cache: a pre-instantiated cache module that matches the `cache-service` API
+* (optional) cache: a pre-instantiated cache module that matches the `cache-service` API or a `cacheModuleConfig` object to be used with superagent-cache's bundled instance of `cacheModule`
+* (optional) defaults: an object that allows you to set defaults to be applied to all queries
 
 ## .get(uri), .head(uri)
 
 Same as superagent except that superagent's response object will be cached.
 
-## .put(uri), .del(uri)
+## .put(uri), .post(uri), .del(uri)
 
 Same as superagent except that the generated cache key will be automatically invalidated when these `HTTP` verbs are used.
 
@@ -419,6 +422,8 @@ require('superagent-cache')(superagent)
 
 #### When only `cache` is passed
 
+> Example 1
+
 ```javascript
 //...it will return a patched superagent instance and consume cache as its data store
 var redisModule = require('cache-service-redis');
@@ -426,11 +431,23 @@ var redisCache = new redisModule({redisEnv: 'REDISCLOUD_URL'});
 var superagent = require('superagent-cache')(null, redisCache);
 ```
 
+> Example 2
+
+```javascript
+//...it will return a patched superagent instance and consume cache as its cacheModuleConfig for use with the bundled instance of cacheModule
+var cacheModuleConfig = {storage: 'session', defaultExpiraiton: 60};
+var superagent = require('superagent-cache')(null, cacheModuleConfig);
+```
+
 #### With `defaults`
 
 The `defaults` object can be passed as the third param at any time. It does not affect the `superagent` or `cache` params. You can see a brief demo [here](#how-do-i-use-a-custom-configuration) and a list of all the options you can pass in the `defaults` object [here](#available-configuration-options).
 
 # Breaking Change History
+
+#### 1.0.6
+
+A bug was introduced that broke superagent-cache's ability to cache while running on the client. This bug was fixed in `1.3.0`. The bug did not affect superagent-cache while running on node.
 
 #### 0.2.0
 

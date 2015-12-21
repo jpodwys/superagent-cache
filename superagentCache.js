@@ -1,15 +1,16 @@
 /**
  * superagentCache constructor
  * @constructor
- * @param {superagent instance} agent (optional)
+ * @param {superagent} agent (optional)
  * @param {cache module} cache (optional)
+ * @param {object} defaults (optional)
  */
 module.exports = function(agent, cache, defaults){
 
   var superagent = (agent) ? agent : require('superagent');
 
   if(!superagent.patchedBySuperagentCache){
-    superagent.cache = (cache) ? cache : new (require('cache-service-cache-module'))();
+    superagent.cache = (cache && cache.get) ? cache : new (require('cache-service-cache-module'))(cache);
     superagent.defaults = defaults || {};
     var Request = superagent.Request;
     var props = resetProps(superagent.defaults);
@@ -115,7 +116,6 @@ module.exports = function(agent, cache, defaults){
         if(~cacheableMethods.indexOf(this.method)){
           superagent.cache.get(key, function (err, response){
             if(!err && response){
-              _this.abort();
               callbackExecutor(cb, err, response, key);
             }
             else{
@@ -157,10 +157,9 @@ module.exports = function(agent, cache, defaults){
         }
         else{
           this._end(function (err, response){
-            if (err) {
+            if(err){
               return callbackExecutor(cb, err, response, key);
             }
-
             if(!err && response){
               var keyGet = key.replace('"method":"' + _this.method + '"', '"method":"GET"');
               var keyHead = key.replace('"method":"' + _this.method + '"', '"method":"HEAD"');
@@ -193,11 +192,8 @@ module.exports = function(agent, cache, defaults){
     function keygen(req, cProps){
       var cleanParams = null;
       var cleanOptions = null;
-      var params = !isEmpty(req.qs) ? req.qs : arrayToObj(req.qsRaw);
-      if(!params && req.req){
-        params = stringToObj(req.req.path);
-      }
-      var options = (req.req && req.req._headers) ? req.req._headers : null;
+      var params = getQueryParams(req);
+      var options = getHeaderOptions(req);
       if(cProps.pruneParams || cProps.pruneOptions){
         cleanParams = (cProps.pruneParams) ? pruneObj(cloneObject(params), cProps.pruneParams) : params;
         cleanOptions = (cProps.pruneOptions) ? pruneObj(cloneObject(options), cProps.pruneOptions, true) : options;
@@ -209,6 +205,32 @@ module.exports = function(agent, cache, defaults){
         params: cleanParams || params || null,
         options: cleanOptions || options || null
       });
+    }
+
+    function getQueryParams(req){
+      if(req && req.qs && !isEmpty(req.qs)){
+        return req.qs;
+      }
+      else if(req && req.qsRaw){
+        return arrayToObj(req.qsRaw);
+      }
+      else if(req && req.req){
+        return stringToObj(req.req.path);
+      }
+      else if(req && req._query){
+        return stringToObj(req._query.join('&'));
+      }
+      return null;
+    }
+
+    function getHeaderOptions(req){
+      if(req && req.req && req.req._headers){
+        return req.req._headers;
+      }
+      else if(req && req._header){
+        return req._header;
+      }
+      return null;
     }
 
     /**
@@ -307,7 +329,8 @@ module.exports = function(agent, cache, defaults){
     }
 
     /**
-     * Reset superagent-cache's default query properties
+     * Reset superagent-cache's default query properties using the options defaults object
+     * @param {object} d
      */
     function resetProps(d){
       return {
