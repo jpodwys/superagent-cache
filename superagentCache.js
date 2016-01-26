@@ -178,13 +178,6 @@ module.exports = function(agent, cache, defaults){
         });
       }
     }
-
-    /**
-     * Set this.req to null so that future http calls get a branc new req object
-     */
-    Request.prototype.reset = function(){
-      this.req = null;
-    }
   }
 
   if(!agent){
