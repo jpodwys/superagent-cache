@@ -1,6 +1,7 @@
 module.exports = {
   /**
    * Generate a cache key unique to this query
+   * @param {superagent} agent
    * @param {object} reg
    * @param {object} cProps
    */
@@ -170,6 +171,7 @@ module.exports = {
 
   /**
    * Generate a background refresh query identical to the current query
+   * @param {superagent} agent
    * @param {object} curProps
    */
   getBackgroundRefreshFunction: function(agent, curProps){
