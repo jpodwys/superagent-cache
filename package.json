@@ -1,6 +1,6 @@
 {
   "name": "superagent-cache",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "Superagent with flexible built-in caching.",
   "main": "superagentCache.js",
   "dependencies": {
