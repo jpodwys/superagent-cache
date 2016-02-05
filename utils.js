@@ -23,6 +23,15 @@ module.exports = {
     });
   },
 
+  // /**
+  //  * Check if we should follow the redirect
+  //  * @param {Number} code
+  //  */
+
+  // isRedirect: function(code){
+  //   return ~[301, 302, 303, 305, 307, 308].indexOf(code);
+  // },
+
   /**
    * Find and extract query params
    * @param {object} reg

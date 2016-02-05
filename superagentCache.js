@@ -123,10 +123,13 @@ module.exports = function(agent, cache, defaults){
             else{
               if(curProps.doQuery){
                 _this._end(function (err, response){
-                  if(err) {
+                  if(err){
                     return utils.callbackExecutor(cb, err, response, key);
                   }
                   else if(!err && response){
+                    // if(utils.isRedirect(response.statusCode)){
+                      
+                    // }
                     if(curProps.prune){
                       response = curProps.prune(response);
                     }
