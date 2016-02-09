@@ -8,9 +8,10 @@
     "cache-service-cache-module": "1.2.2"
   },
   "devDependencies": {
-    "mocha": "1.13.0",
+    "es6-promise": "^3.0.2",
     "expect": "1.6.0",
     "express": "3.4.3",
+    "mocha": "1.13.0",
     "mock-localstorage": "0.1.3"
   },
   "scripts": {
