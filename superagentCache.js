@@ -110,8 +110,11 @@ module.exports = function(agent, cache, defaults){
      * @param {function} cb
      */
     Request.prototype.end = function(cb){
+      var _this = this;
       var curProps = props;
       props = utils.resetProps(superagent.defaults);
+      this.scRedirectsList = this.scRedirectsList || [];
+      this.scRedirectsList = this.scRedirectsList.concat(this._redirectList);
       if(~supportedMethods.indexOf(this.method)){
         var _this = this;
         var key = utils.keygen(superagent, this, curProps);
@@ -127,9 +130,7 @@ module.exports = function(agent, cache, defaults){
                     return utils.callbackExecutor(cb, err, response, key);
                   }
                   else if(!err && response){
-                    // if(utils.isRedirect(response.statusCode)){
-                      
-                    // }
+                    response.redirects = _this.scRedirectsList;
                     if(curProps.prune){
                       response = curProps.prune(response);
                     }
