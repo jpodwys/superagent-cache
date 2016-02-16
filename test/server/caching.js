@@ -129,6 +129,124 @@ describe('superagentCache', function(){
       );
     });
 
+    describe('res.redirects tests to ensure superagent-cache matches superagent', function(){
+      var Promise = require('es6-promise').Promise;
+      var prune = function(res) {
+        return {
+          body: res.body,
+          text: res.text,
+          headers: res.headers,
+          statusCode: res.statusCode,
+          status: res.status,
+          ok: res.ok,
+          redirects: res.redirects
+        };
+      };
+
+      before(function(){
+        require('../../superagentCache')(superagent, {backgroundRefreshInterval: 500, storageMock: storageMock}, {prune: prune});
+      });
+
+      beforeEach(function(){
+        superagent.cache.flush();
+      });
+      
+      after(function(){
+        require('../../superagentCache')(superagent, {backgroundRefreshInterval: 500, storageMock: storageMock}, null);
+      });
+      
+      function superagentRunPromise(url, redirectsExpected) {
+        return new Promise(function(resolve, reject) {
+          superagent
+            .get(url)
+            .set('Accept', 'application/ld+json, application/json')
+            .end(function(err, res) {
+              if (err) {
+                return reject(err);
+	      }
+	      expect(res.redirects).toEqual(redirectsExpected);
+	      resolve();
+	    });
+        });
+      }
+      
+      function runNoRedirects(input) {
+        return superagentRunPromise(
+            'http://json-ld.org/test-suite/tests/remote-doc-0001-in.jsonld',
+            []);
+      }
+      
+      var runWithRedirectsList = [
+        function(input) {
+          return superagentRunPromise(
+            'http://json-ld.org/test-suite/tests/remote-doc-0005-in.jsonld',
+            ['http://json-ld.org/test-suite/tests/remote-doc-0001-in.jsonld']);
+        },
+        function(input) {
+          return superagentRunPromise(
+            'http://json-ld.org/test-suite/tests/remote-doc-0006-in.jsonld',
+            ['http://json-ld.org/test-suite/tests/remote-doc-0001-in.jsonld']);
+        }
+      ];
+      
+      // each of the following fails with superagent-cache,
+      // but passes with just with superagent
+        
+      it('.get(noRedirect) then .get(redirect0) then .get(redirect0) then .get(redirect1)', function (done) {
+        runNoRedirects()
+          .then(runWithRedirectsList[0])
+          .then(runWithRedirectsList[0])
+          .then(runWithRedirectsList[1])
+	  .then(done)
+	  .catch(done);
+      });
+        
+      it('.get(noRedirect) then .get(redirect0) then .get(redirect1) then .get(redirect0)', function (done) {
+        runNoRedirects()
+          .then(runWithRedirectsList[0])
+          .then(runWithRedirectsList[1])
+          .then(runWithRedirectsList[0])
+	  .then(done)
+	  .catch(done);
+      });
+        
+      it('.get(noRedirect) then .get(redirect1) then .get(redirect0) then .get(redirect0)', function (done) {
+        runNoRedirects()
+          .then(runWithRedirectsList[1])
+          .then(runWithRedirectsList[0])
+          .then(runWithRedirectsList[0])
+	  .then(done)
+	  .catch(done);
+      });
+
+      it('.get(redirect1) then .get(noRedirect) then .get(redirect0) then .get(redirect0)', function (done) {
+        runWithRedirectsList[1]()
+          .then(runNoRedirects)
+          .then(runWithRedirectsList[0])
+          .then(runWithRedirectsList[0])
+	  .then(done)
+	  .catch(done);
+      });
+
+      it('.get(redirect1) then .get(redirect0) then .get(noRedirect) then .get(redirect0)', function (done) {
+        runWithRedirectsList[1]()
+          .then(runWithRedirectsList[0])
+          .then(runNoRedirects)
+          .then(runWithRedirectsList[0])
+	  .then(done)
+	  .catch(done);
+      });
+
+      it('.get(redirect0) then .get(redirect1) then .get(redirect0) then .get(noRedirect)', function (done) {
+	runWithRedirectsList[0]()
+          .then(runWithRedirectsList[1])
+	  .then(runWithRedirectsList[0])
+	  .then(runNoRedirects)
+	  .then(done)
+	  .catch(done);
+      });
+    });
+
     it('.get() then .put() should invalidate cache', function (done) {
       superagent
         .get('localhost:3000/one')
