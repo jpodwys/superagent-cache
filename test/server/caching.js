@@ -213,20 +213,20 @@ describe('superagentCache', function(){
     
     function runNoRedirects(input) {
       return superagentRunPromise(
-          'http://json-ld.org/test-suite/tests/remote-doc-0001-in.jsonld',
+          'localhost:3000/one',
           []);
     }
     
     var runWithRedirectsList = [
       function(input) {
         return superagentRunPromise(
-          'http://json-ld.org/test-suite/tests/remote-doc-0005-in.jsonld',
-          ['http://json-ld.org/test-suite/tests/remote-doc-0001-in.jsonld']);
+          'http://localhost:3000/redirect',
+          ['http://localhost:3000/one']);
       },
       function(input) {
         return superagentRunPromise(
-          'http://json-ld.org/test-suite/tests/remote-doc-0006-in.jsonld',
-          ['http://json-ld.org/test-suite/tests/remote-doc-0001-in.jsonld']);
+          'http://localhost:3000/redirect',
+          ['http://localhost:3000/one']);
       }
     ];
     
