@@ -7,10 +7,22 @@ var superagent = require('superagent');
 var cModule = require('cache-service-cache-module');
 var mockStorage = require('mock-localstorage');
 var storageMock = new mockStorage();
-//var cacheModule = new cModule({backgroundRefreshInterval: 500});
-require('../../superagentCache')(superagent, {backgroundRefreshInterval: 500, storageMock: storageMock}, null);
+
+var prune = function(res) {
+  return {
+    body: res.body,
+    text: res.text,
+    headers: res.headers,
+    statusCode: res.statusCode,
+    status: res.status,
+    ok: res.ok,
+    redirects: res.redirects
+  }
+}
+
+require('../../superagentCache')(superagent, {backgroundRefreshInterval: 500, storageMock: storageMock}, {prune: prune});
 //To make sure requiring a second time won't break anything
-require('../../superagentCache')(superagent, {backgroundRefreshInterval: 500, storageMock: storageMock}, null);
+require('../../superagentCache')(superagent, {backgroundRefreshInterval: 500, storageMock: storageMock}, {prune: prune});
 
 var app = express();
 
@@ -46,9 +58,13 @@ app.get('/options', function(req, res){
   res.send(200, {pruneOptions: req.get('pruneOptions'), otherOptions: req.get('otherOptions')});
 });
 
+app.get('/redirect', function(req, res){
+  res.redirect('/one');
+});
+
 app.listen(3000);
 
-function checkBrowserStorage(key, value, cb){
+function checkBrowserStorage(key, value){
   setTimeout(function(){
     var data = storageMock.getItem('cache-module-storage-mock');
     data = JSON.parse(data);
@@ -58,7 +74,6 @@ function checkBrowserStorage(key, value, cb){
     else{
       expect(data.db[key]).toBe(undefined);
     }
-    if(cb) cb();
   }, 1);
 }
 
@@ -110,6 +125,20 @@ describe('superagentCache', function(){
       );
     });
 
+    it('.get(redirect) .end() should cache the result of the redirect using the original request\'s key', function (done) {
+      superagent
+        .get('http://localhost:3000/redirect')
+        .end(function (err, response, key){
+          expect(key).toBe('{"method":"GET","uri":"http://localhost:3000/redirect","params":null,"options":null}');
+          expect(response.body.key).toBe('one');
+          superagent.cache.get(key, function (err, response) {
+            expect(response.body.key).toBe('one');
+            done();
+          });
+        }
+      );
+    });
+
     it('.get() then .put() should invalidate cache', function (done) {
       superagent
         .get('localhost:3000/one')
@@ -117,49 +146,146 @@ describe('superagentCache', function(){
           expect(response.body.key).toBe('one');
           superagent.cache.get(key, function (err, response) {
             expect(response.body.key).toBe('one');
-            checkBrowserStorage(key, 'one', function (){
-              superagent
-                .put('localhost:3000/one')
-                .end(function (err, response, key){
-                  expect(response.body.key).toBe('put');
-                  superagent.cache.get(key, function (err, response) {
-                    expect(response).toBe(null);
-                    checkBrowserStorage(key, false);
-                    done();
-                  });
-                }
-              );
-            });
+            superagent
+              .put('localhost:3000/one')
+              .end(function (err, response, key){
+                expect(response.body.key).toBe('put');
+                superagent.cache.get(key, function (err, response) {
+                  expect(response).toBe(null);
+                  done();
+                });
+              }
+            );
           });
         }
       );
     });
 
-    it('.get() then .del() should invalidate the generated cache key', function (done) {
+    it('.get() then .del() should invalidate cache', function (done) {
       superagent
         .get('localhost:3000/one')
         .end(function (err, response, key){
           expect(response.body.key).toBe('one');
           superagent.cache.get(key, function (err, response){
             expect(response.body.key).toBe('one');
-            checkBrowserStorage(key, 'one', function (){
-              superagent
-                .del('localhost:3000/one')
-                .end(function (err, response, key){
-                  expect(response.body.key).toBe('delete');
-                  superagent.cache.get(key, function (err, response){
-                    expect(response).toBe(null);
-                    checkBrowserStorage(key, false);
-                    done();
-                  });
-                }
-              );
-            });
+            superagent
+              .del('localhost:3000/one')
+              .end(function (err, response, key){
+                expect(response.body.key).toBe('delete');
+                superagent.cache.get(key, function (err, response){
+                  expect(response).toBe(null);
+                  done();
+                });
+              }
+            );
           });
         }
       );
     });
 
+  });
+
+  describe('res.redirects tests to ensure superagent-cache matches superagent', function(){
+    var Promise = require('es6-promise').Promise;
+
+    beforeEach(function(){
+      superagent.cache.flush();
+    });
+    
+    after(function(){
+      require('../../superagentCache')(superagent, {backgroundRefreshInterval: 500, storageMock: storageMock}, null);
+    });
+    
+    function superagentRunPromise(url, redirectsExpected) {
+      return new Promise(function(resolve, reject) {
+        superagent
+          .get(url)
+          .set('Accept', 'application/ld+json, application/json')
+          .end(function(err, res) {
+            if (err) {
+              return reject(err);
+          }
+          expect(res.redirects).toEqual(redirectsExpected);
+          return resolve();
+        });
+      });
+    }
+    
+    function runNoRedirects(input) {
+      return superagentRunPromise(
+          'localhost:3000/one',
+          []);
+    }
+    
+    var runWithRedirectsList = [
+      function(input) {
+        return superagentRunPromise(
+          'http://localhost:3000/redirect',
+          ['http://localhost:3000/one']);
+      },
+      function(input) {
+        return superagentRunPromise(
+          'http://localhost:3000/redirect',
+          ['http://localhost:3000/one']);
+      }
+    ];
+    
+    // each of the following fails with superagent-cache,
+    // but passes with just with superagent
+      
+    it('.get(noRedirect) then .get(redirect0) then .get(redirect0) then .get(redirect1)', function (done) {
+      runNoRedirects()
+        .then(runWithRedirectsList[0])
+        .then(runWithRedirectsList[0])
+        .then(runWithRedirectsList[1])
+        .then(done)
+        .catch(done);
+        });
+            
+    it('.get(noRedirect) then .get(redirect0) then .get(redirect1) then .get(redirect0)', function (done) {
+      runNoRedirects()
+        .then(runWithRedirectsList[0])
+        .then(runWithRedirectsList[1])
+        .then(runWithRedirectsList[0])
+        .then(done)
+        .catch(done);
+        });
+            
+    it('.get(noRedirect) then .get(redirect1) then .get(redirect0) then .get(redirect0)', function (done) {
+      runNoRedirects()
+        .then(runWithRedirectsList[1])
+        .then(runWithRedirectsList[0])
+        .then(runWithRedirectsList[0])
+        .then(done)
+        .catch(done);
+        });
+
+    it('.get(redirect1) then .get(noRedirect) then .get(redirect0) then .get(redirect0)', function (done) {
+      runWithRedirectsList[1]()
+        .then(runNoRedirects)
+        .then(runWithRedirectsList[0])
+        .then(runWithRedirectsList[0])
+        .then(done)
+        .catch(done);
+        });
+
+    it('.get(redirect1) then .get(redirect0) then .get(noRedirect) then .get(redirect0)', function (done) {
+      runWithRedirectsList[1]()
+        .then(runWithRedirectsList[0])
+        .then(runNoRedirects)
+        .then(runWithRedirectsList[0])
+        .then(done)
+        .catch(done);
+        });
+
+    it('.get(redirect0) then .get(redirect1) then .get(redirect0) then .get(noRedirect)', function (done) {
+      runWithRedirectsList[0]()
+        .then(runWithRedirectsList[1])
+        .then(runWithRedirectsList[0])
+        .then(runNoRedirects)
+        .then(done)
+        .catch(done);
+        });
   });
 
 });

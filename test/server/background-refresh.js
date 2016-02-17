@@ -5,7 +5,6 @@ var expect = require('expect');
 var express = require('express');
 var superagent = require('superagent');
 var cModule = require('cache-service-cache-module');
-//var cacheModule = new cModule({backgroundRefreshInterval: 500});
 require('../../superagentCache')(superagent, {backgroundRefreshInterval: 500}, null);
 //To make sure requiring a second time won't break anything
 require('../../superagentCache')(superagent, {backgroundRefreshInterval: 500}, null);
@@ -42,6 +41,10 @@ app.get('/params', function(req, res){
 
 app.get('/options', function(req, res){
   res.send(200, {pruneOptions: req.get('pruneOptions'), otherOptions: req.get('otherOptions')});
+});
+
+app.get('/redirect', function(req, res){
+  res.redirect('/one');
 });
 
 app.listen(3000);

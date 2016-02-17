@@ -44,6 +44,10 @@ app.get('/options', function(req, res){
   res.send(200, {pruneOptions: req.get('pruneOptions'), otherOptions: req.get('otherOptions')});
 });
 
+app.get('/redirect', function(req, res){
+  res.redirect('/one');
+});
+
 app.listen(3000);
 
 describe('superagentCache', function(){
