@@ -62,6 +62,10 @@ app.get('/redirect', function(req, res){
   res.redirect('/one');
 });
 
+app.get('/404', function(req, res){
+  res.send(404);
+});
+
 app.listen(3000);
 
 function checkBrowserStorage(key, value){
@@ -179,6 +183,15 @@ describe('superagentCache', function(){
               }
             );
           });
+        }
+      );
+    });
+
+    it('.get(404) .end() should fire', function (done) {
+      superagent
+        .get('localhost:3000/404')
+        .end(function (err, response, key){
+          expect(true).toBe(true);
         }
       );
     });

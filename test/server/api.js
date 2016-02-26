@@ -47,6 +47,10 @@ app.get('/redirect', function(req, res){
   res.redirect('/one');
 });
 
+app.get('/404', function(req, res){
+  res.send(404);
+});
+
 app.listen(3000);
 
 describe('superagentCache', function(){
