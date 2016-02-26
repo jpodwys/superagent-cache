@@ -187,11 +187,12 @@ describe('superagentCache', function(){
       );
     });
 
-    it('.get(404) .end() should fire', function (done) {
+    it.only('.get(404) .end() should fire', function (done) {
       superagent
         .get('localhost:3000/404')
         .end(function (err, response, key){
           expect(true).toBe(true);
+          done();
         }
       );
     });
