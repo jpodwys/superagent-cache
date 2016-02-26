@@ -48,11 +48,15 @@ module.exports = {
    * @param {object} reg
    */
   getHeaderOptions: function(req){
-    if(req && req.req && req.req._headers){
-      return req.req._headers;
+    //I have to remove the User-Agent header ever since superagent 1.7.0
+    if(req && req._header){
+      return this.pruneObj(req._header, ['User-Agent', 'user-agent']);
     }
-    else if(req && req._header){
-      return req._header;
+    else if(req && req.req && req.req._headers){
+      return this.pruneObj(req.req._headers, ['User-Agent', 'user-agent']);
+    }
+    else if(req && req.header){
+      return this.pruneObj(req.header, ['User-Agent', 'user-agent']);
     }
     return null;
   },
@@ -108,9 +112,9 @@ module.exports = {
     for(var i = 0; i < props.length; i++){
       var prop = props[i];
       if(isOptions){
-        prop = prop.toLowerCase();
+        delete obj[prop.toLowerCase()];
       }
-      delete obj[prop]
+      delete obj[prop];
     }
     return obj;
   },

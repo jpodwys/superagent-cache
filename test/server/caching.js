@@ -129,7 +129,7 @@ describe('superagentCache', function(){
       superagent
         .get('http://localhost:3000/redirect')
         .end(function (err, response, key){
-          expect(key).toBe('{"method":"GET","uri":"http://localhost:3000/redirect","params":null,"options":null}');
+          expect(key).toBe('{"method":"GET","uri":"http://localhost:3000/redirect","params":null,"options":{}}');
           expect(response.body.key).toBe('one');
           superagent.cache.get(key, function (err, response) {
             expect(response.body.key).toBe('one');

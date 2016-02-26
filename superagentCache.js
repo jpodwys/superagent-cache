@@ -110,7 +110,6 @@ module.exports = function(agent, cache, defaults){
      * @param {function} cb
      */
     Request.prototype.end = function(cb){
-      var _this = this;
       var curProps = props;
       props = utils.resetProps(superagent.defaults);
       this.scRedirectsList = this.scRedirectsList || [];
