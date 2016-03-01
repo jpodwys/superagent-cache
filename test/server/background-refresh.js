@@ -51,6 +51,12 @@ app.get('/404', function(req, res){
   res.send(404);
 });
 
+var count = 0;
+app.get('/count', function(req, res){
+  count++;
+  res.send(200, {count: count});
+});
+
 app.listen(3000);
 
 describe('superagentCache', function(){
