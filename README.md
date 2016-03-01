@@ -2,7 +2,7 @@
 
 Superagent with flexible built-in caching.
 
-Upgrading from an older version? Please see the [Breaking Change History](#breaking-change-history) section.
+Upgrading from an older version or seeing a bug? Please see the [Breaking Change History](#breaking-change-history) section.
 
 # Basic Usage
 
@@ -444,6 +444,12 @@ var superagent = require('superagent-cache')(null, cacheModuleConfig);
 The `defaults` object can be passed as the third param at any time. It does not affect the `superagent` or `cache` params. You can see a brief demo [here](#how-do-i-use-a-custom-configuration) and a list of all the options you can pass in the `defaults` object [here](#available-configuration-options).
 
 # Breaking Change History
+
+#### 1.3.5
+
+In superagent `1.7.0`, the superagent team introduced some internal changes to how they handle headers. As a result, you must use superagent-cache `1.3.5` or later to be compatible with superagent `1.7.0` or later. All versions of superagent-cache (to this point) should be backwards compatible with all versions of superagent going back to at least version `1.1.0`. To be clear, this was no one's fault. However, I have reached out to the superagent team to see what I can do to help minimize internally breaking changes in the future.
+
+If you're seeing other incompatibilities, please submit an issue.
 
 #### 1.0.6
 

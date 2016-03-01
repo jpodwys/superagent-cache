@@ -47,6 +47,10 @@ app.get('/redirect', function(req, res){
   res.redirect('/one');
 });
 
+app.get('/404', function(req, res){
+  res.send(404);
+});
+
 app.listen(3000);
 
 describe('superagentCache', function(){
@@ -201,9 +205,14 @@ describe('superagentCache', function(){
           //console.log(key);
           expect(response.body.pruneOptions).toBe('true');
           expect(response.body.otherOptions).toBe('false');
-          //Superagent converts headers to lower case so I check here for lower case versions of the headers sent above
+          //Before superagent 1.7.0, superagent converts headers to lower case. To be backwards compatible,
+          //I check for lower as well as the upper case versions of the headers sent above
           expect(key.indexOf('pruneoptions')).toBe(-1);
-          expect(key.indexOf('otheroptions')).toBeGreaterThan(-1);
+          expect(key.indexOf('pruneOptions')).toBe(-1);
+          var lowerOtherOptions = key.indexOf('otheroptions');
+          var upperOtherOptions = key.indexOf('otherOptions');
+          var otherOptionsIsPresent = (lowerOtherOptions > -1 || upperOtherOptions > -1);
+          expect(otherOptionsIsPresent).toBe(true);
           done();
         }
       )

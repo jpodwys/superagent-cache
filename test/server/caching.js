@@ -62,6 +62,10 @@ app.get('/redirect', function(req, res){
   res.redirect('/one');
 });
 
+app.get('/404', function(req, res){
+  res.send(404);
+});
+
 app.listen(3000);
 
 function checkBrowserStorage(key, value){
@@ -129,7 +133,7 @@ describe('superagentCache', function(){
       superagent
         .get('http://localhost:3000/redirect')
         .end(function (err, response, key){
-          expect(key).toBe('{"method":"GET","uri":"http://localhost:3000/redirect","params":null,"options":null}');
+          expect(key).toBe('{"method":"GET","uri":"http://localhost:3000/redirect","params":null,"options":{}}');
           expect(response.body.key).toBe('one');
           superagent.cache.get(key, function (err, response) {
             expect(response.body.key).toBe('one');
@@ -179,6 +183,16 @@ describe('superagentCache', function(){
               }
             );
           });
+        }
+      );
+    });
+
+    it('.get(404) .end() should fire', function (done) {
+      superagent
+        .get('localhost:3000/404')
+        .end(function (err, response, key){
+          expect(true).toBe(true);
+          done();
         }
       );
     });

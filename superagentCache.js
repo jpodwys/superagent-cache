@@ -110,7 +110,6 @@ module.exports = function(agent, cache, defaults){
      * @param {function} cb
      */
     Request.prototype.end = function(cb){
-      var _this = this;
       var curProps = props;
       props = utils.resetProps(superagent.defaults);
       this.scRedirectsList = this.scRedirectsList || [];
@@ -146,17 +145,17 @@ module.exports = function(agent, cache, defaults){
                         refresh = utils.getBackgroundRefreshFunction(superagent, curProps);
                       }
                       superagent.cache.set(key, response, curProps.expiration, refresh, function (){
-                        utils.callbackExecutor(cb, err, response, key);
+                        return utils.callbackExecutor(cb, err, response, key);
                       });
                     }
                     else{
-                      utils.callbackExecutor(cb, err, response, key);
+                      return utils.callbackExecutor(cb, err, response, key);
                     }
                   }
                 });
               }
               else{
-                utils.callbackExecutor(cb, null, null, key);
+                return utils.callbackExecutor(cb, null, null, key);
               }
             }
           });
@@ -178,7 +177,7 @@ module.exports = function(agent, cache, defaults){
       }
       else{
         this._end(function (err, response){
-          utils.callbackExecutor(cb, err, response, undefined);
+          return utils.callbackExecutor(cb, err, response, undefined);
         });
       }
     }
