@@ -62,8 +62,15 @@ app.get('/redirect', function(req, res){
   res.redirect('/one');
 });
 
+
 app.get('/404', function(req, res){
   res.send(404);
+});
+
+var count = 0;
+app.get('/count', function(req, res){
+  count++;
+  res.send(200, {count: count});
 });
 
 app.listen(3000);
@@ -205,11 +212,11 @@ describe('superagentCache', function(){
     beforeEach(function(){
       superagent.cache.flush();
     });
-    
+
     after(function(){
       require('../../superagentCache')(superagent, {backgroundRefreshInterval: 500, storageMock: storageMock}, null);
     });
-    
+
     function superagentRunPromise(url, redirectsExpected) {
       return new Promise(function(resolve, reject) {
         superagent
@@ -224,13 +231,13 @@ describe('superagentCache', function(){
         });
       });
     }
-    
+
     function runNoRedirects(input) {
       return superagentRunPromise(
           'localhost:3000/one',
           []);
     }
-    
+
     var runWithRedirectsList = [
       function(input) {
         return superagentRunPromise(
@@ -243,10 +250,10 @@ describe('superagentCache', function(){
           ['http://localhost:3000/one']);
       }
     ];
-    
+
     // each of the following fails with superagent-cache,
     // but passes with just with superagent
-      
+
     it('.get(noRedirect) then .get(redirect0) then .get(redirect0) then .get(redirect1)', function (done) {
       runNoRedirects()
         .then(runWithRedirectsList[0])
@@ -255,7 +262,7 @@ describe('superagentCache', function(){
         .then(done)
         .catch(done);
         });
-            
+
     it('.get(noRedirect) then .get(redirect0) then .get(redirect1) then .get(redirect0)', function (done) {
       runNoRedirects()
         .then(runWithRedirectsList[0])
@@ -264,7 +271,7 @@ describe('superagentCache', function(){
         .then(done)
         .catch(done);
         });
-            
+
     it('.get(noRedirect) then .get(redirect1) then .get(redirect0) then .get(redirect0)', function (done) {
       runNoRedirects()
         .then(runWithRedirectsList[1])

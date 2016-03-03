@@ -84,6 +84,16 @@ module.exports = function(agent, cache, defaults){
     }
 
     /**
+     * Whether or not to forceUpdate. forceUpdate will perform the request no matter if the request is in the cache or not
+     * @param {string} responseProp
+     */
+    Request.prototype.forceUpdate = function(forceUpdate){
+      forceUpdate = typeof forceUpdate === 'boolean' ? forceUpdate : true;
+      props.forceUpdate = forceUpdate;
+      return this;
+    }
+
+    /**
      * Initialize a background refresh for the generated key and value
      * @param {boolean | function} backgroundRefresh
      */
@@ -119,7 +129,7 @@ module.exports = function(agent, cache, defaults){
         var key = utils.keygen(superagent, this, curProps);
         if(~cacheableMethods.indexOf(this.method)){
           superagent.cache.get(key, function (err, response){
-            if(!err && response){
+            if(!err && response && !curProps.forceUpdate){
               utils.callbackExecutor(cb, err, response, key);
             }
             else{
