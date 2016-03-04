@@ -84,12 +84,11 @@ module.exports = function(agent, cache, defaults){
     }
 
     /**
-     * Whether or not to forceUpdate. forceUpdate will perform the request no matter if the request is in the cache or not
+     * Whether to execute an http query regardless of whether the cache has the generated key
      * @param {string} responseProp
      */
     Request.prototype.forceUpdate = function(forceUpdate){
-      forceUpdate = typeof forceUpdate === 'boolean' ? forceUpdate : true;
-      props.forceUpdate = forceUpdate;
+      props.forceUpdate = (typeof forceUpdate === 'boolean') ? forceUpdate : true;
       return this;
     }
 

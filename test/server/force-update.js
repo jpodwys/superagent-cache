@@ -62,20 +62,21 @@ describe('superagentCache', function(){
     superagent.cache.flush();
   });
 
-  describe('force update tests', function () {
+  describe('forceUpdate tests', function () {
 
   it('.forceUpdate() should prevent the module from hitting the cache', function (done) {
     superagent
       .get('localhost:3000/count')
       .end(function (err, response, key){
-        // do a new request to see if it was cached
-        superagent
-          .get('localhost:3000/count')
-          .forceUpdate()
-          .end(function (err, response, key){
-            // the request should ignore the cache and go straight to the server
-            expect(response.body.count).toBe(2);
-            done();
+        superagent.cache.get(key, function (err, response){
+          expect(response.body.count).toBe(1);
+          superagent
+            .get('localhost:3000/count')
+            .forceUpdate()
+            .end(function (err, response, key){
+              expect(response.body.count).toBe(2);
+              done();
+            });
           });
         });
       });

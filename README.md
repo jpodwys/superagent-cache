@@ -105,6 +105,7 @@ All options that can be passed to the `defaults` `require` param can be overwrit
 * expiration
 * cacheWhenEmpty
 * doQuery
+* forceUpdate
 * backgroundRefresh
 
 # Supported Caches
@@ -257,7 +258,7 @@ Use this function when you need to override your `cache`'s `defaultExpiration` p
 
 ## .cacheWhenEmpty(bool)
 
-Tell `superagent-cache` whether to cache the response object when it's `false`, `null`, or `{}`.This is especially useful when using `.responseProp()` or `.prune()` which can cause `response` to be falsy.  By default, `cacheWhenEmpty` is `true`.
+Tell `superagent-cache` whether to cache the response object when it's `false`, `null`, or `{}`.This is especially useful when using `.responseProp()` or `.prune()` which can cause `response` to be falsy. By default, `cacheWhenEmpty` is `true`.
 
 #### Arguments
 
@@ -265,11 +266,19 @@ Tell `superagent-cache` whether to cache the response object when it's `false`, 
 
 ## .doQuery(bool)
 
-Tell superagent-cache whether to perform an ajax call if the generated cache key is not found.  By default, cacheWhenEmpty is true.
+Tell superagent-cache whether to perform an ajax call if the generated cache key is not found. By default, doQuery is true.
 
 #### Arguments
 
 * bool: boolean, default: true
+
+## .forceUpdate(bool)
+
+Tells superagent-cache to perform an ajax call regardless of whether the generated cache key is found. By default, forceUpdate is false.
+
+#### Arguments
+
+* bool: boolean, default: false
 
 ## .backgroundRefresh(value)
 
