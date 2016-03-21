@@ -466,4 +466,4 @@ A bug was introduced that broke superagent-cache's ability to cache while runnin
 
 #### 0.2.0
 
-* `superagent-cache` is now more flexible, allowing usage of any cache that matches `cache-service`'s API. To make it lighter, then, the hard dependency on `cache-service` was replaced with the much lighter `cacheModule`. As a result, `superagent-cache` can no longer construct a `cache-service` instance for you. If you wish to use `cache-service`, you must instantiate it externally and hand it in as `cache`--the second param in the `require` command.
+`superagent-cache` is now more flexible, allowing usage of any cache that matches `cache-service`'s API. To make it lighter, then, the hard dependency on `cache-service` was replaced with the much lighter `cacheModule`. As a result, `superagent-cache` can no longer construct a `cache-service` instance for you. If you wish to use `cache-service`, you must instantiate it externally and hand it in as `cache`--the second param in the `require` command.
