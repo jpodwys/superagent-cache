@@ -123,10 +123,10 @@ module.exports = function(agent, cache, defaults){
       props = utils.resetProps(superagent.defaults);
       this.scRedirectsList = this.scRedirectsList || [];
       this.scRedirectsList = this.scRedirectsList.concat(this._redirectList);
-      if(~supportedMethods.indexOf(this.method)){
+      if(~supportedMethods.indexOf(this.method.toUpperCase())){
         var _this = this;
         var key = utils.keygen(superagent, this, curProps);
-        if(~cacheableMethods.indexOf(this.method)){
+        if(~cacheableMethods.indexOf(this.method.toUpperCase())){
           superagent.cache.get(key, function (err, response){
             if(!err && response && !curProps.forceUpdate){
               utils.callbackExecutor(cb, err, response, key);
