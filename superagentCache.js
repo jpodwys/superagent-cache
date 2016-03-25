@@ -76,7 +76,7 @@ module.exports = function(agent, cache, defaults){
 
     /**
      * Whether to cache superagent's http response object when it "empty"--especially useful with .prune and .pruneParams
-     * @param {string} responseProp
+     * @param {boolean} cacheWhenEmpty
      */
     Request.prototype.cacheWhenEmpty = function(cacheWhenEmpty){
       props.cacheWhenEmpty = cacheWhenEmpty;
@@ -85,7 +85,7 @@ module.exports = function(agent, cache, defaults){
 
     /**
      * Whether to execute an http query regardless of whether the cache has the generated key
-     * @param {string} responseProp
+     * @param {boolean} forceUpdate
      */
     Request.prototype.forceUpdate = function(forceUpdate){
       props.forceUpdate = (typeof forceUpdate === 'boolean') ? forceUpdate : true;
