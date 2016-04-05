@@ -444,7 +444,7 @@ var superagent = require('superagent-cache')(null, redisCache);
 
 ```javascript
 //...it will return a patched superagent instance and consume cache as its cacheModuleConfig for use with the bundled instance of cacheModule
-var cacheModuleConfig = {storage: 'session', defaultExpiraiton: 60};
+var cacheModuleConfig = {storage: 'session', defaultExpiration: 60};
 var superagent = require('superagent-cache')(null, cacheModuleConfig);
 ```
 
