@@ -143,7 +143,7 @@ module.exports = {
   },
 
   /**
-   * Return a cloneof an object
+   * Return a clone of an object
    * @param {object} obj
    */
   cloneObject: function(obj){
@@ -157,7 +157,7 @@ module.exports = {
   },
 
   /**
-   * Reset superagent-cache's default query properties using the options defaults object
+   * Reset superagent-cache's default query properties using the defaults object
    * @param {object} d
    */
   resetProps: function(d){
