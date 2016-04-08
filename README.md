@@ -4,6 +4,24 @@ Superagent with flexible built-in caching.
 
 Upgrading from an older version or seeing a bug? Please see the [Breaking Change History](#breaking-change-history) section.
 
+# Contents
+
+* [Basic Usage](#basic-usage)
+* [Install](#install)
+* [Run Tests](#run-tests)
+* [How Does it Work?](#how-does-it-work)
+* [What Exactly Gets Cached?](#what-exactly-gets-cached)
+* [Where Does superagent-cache Store Data?](#where-does-superagent-cache-store-data)
+* [What Does the Default Configuration Give Me?](#what-does-the-default-configuration-give-me)
+* [How Do I Use a Custom Configuration?](#how-do-i-use-a-custom-configuration)
+* [Available Configuration Options](#available-configuration-options)
+* [Supported Caches](#supported-caches)
+* [API](#api)
+* [Using Background Refresh](#using-background-refresh)
+* [More Usage Examples](#more-usage-examples)
+* [Breaking Change History](#breaking-change-history)
+* [Release Notes](https://github.com/jpodwys/superagent-cache/releases)
+
 # Basic Usage
 
 Require and instantiate superagent-cache as follows to get the [default configuration](#what-does-the-default-configuration-give-me):
