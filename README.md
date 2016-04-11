@@ -182,7 +182,7 @@ If you know you want a single, top-level property from superagent's response obj
 
 ```javascript
 //response will now be replaced with superagent's response.body
-//but all other top-level response properties,such as response.ok and response.status, will be ommitted
+//but all other top-level response properties, such as response.ok and response.status, will be ommitted
 superagent
   .get(uri)
   .responseProp('body')
@@ -196,7 +196,7 @@ superagent
 
 > Caution: if you use this function, `supergent-cache` [will not gut](#what-exactly-gets-cached) the `response` object for you. Be sure that the result of your `.prune()` callback function will never be circular and is not larger than it needs to be.
 
-If you need to dig several layers into superagent's response, you can do so by passing a function to `.prune()`. Your prune function will receive superagent's response and should return a truthy value or null. The benefit of using this function is that you can cache only what you need.
+If you need to dig several layers into superagent's response, you can do so by passing a function to `.prune()`. Your prune function will receive superagent's response and should return a truthy value or `null`. The benefit of using this function is that you can cache only what you need.
 
 #### Arguments
 
@@ -209,7 +209,7 @@ var prune = function(r){
   if(r && r.ok && r.body && r.body.user) ? r.body.user : null;
 }
 
-//response will now be replaced with r.body.urer or null
+//response will now be replaced with r.body.user or null
 //and only r.body.user will be cached rather than the entire superagent response
 superagent
   .get(uri)
@@ -245,7 +245,7 @@ superagent
 
 ## .pruneOptions(options)
 
-This function works just like the `.pruneParams()` funciton except that it modifies the arguments passed to the `.set()` chainable method rather than those passed to the `.query()` chainable method.
+This function works just like the `.pruneParams()` funciton except that it modifies the arguments passed to the `.set()` chainable method (headers) rather than those passed to the `.query()` chainable method.
 
 #### Arguments
 
@@ -342,11 +342,11 @@ With a typical cache setup, you're left to find the perfect compromise between h
 
 #### How do I turn it on?
 
-By default, background refresh is off. It will turn itself on the first time you use the `.backgroundRefresh)` chainable.
+By default, background refresh is off. It will turn itself on the first time you use the `.backgroundRefresh()` chainable.
 
 #### Setup
 
-`superagent-cache` relies on the background refresh feature of the `cache` param you pass into the `require` command. When you use the `.backgroundRefresh()` chainable, `superagent-cache` passes the provided value into `cache`. This means that if you're using `cache-service`, you almost certainly want `cache-service`'s `writeToVolatileCaches` property set to `true` (it defaults to `true`) so that the data set by background refresh will propogate forward to earlier caches (`cache-service` ONLY background refreshses to the final cache passed to it)
+`superagent-cache` relies on the background refresh feature of the `cache` param you pass into the `require` command. When you use the `.backgroundRefresh()` chainable, `superagent-cache` passes the provided value into `cache`. This means that if you're using `cache-service`, you almost certainly want `cache-service`'s `writeToVolatileCaches` property set to `true` (it defaults to `true`) so that the data set by background refresh will propogate forward to earlier caches (`cache-service` ONLY background refreshses the final cache passed to it).
 
 #### Configure
 
