@@ -102,6 +102,15 @@ module.exports = function(agent, cache, defaults){
     }
 
     /**
+     * Overwrites superagent's fake promise support and adds the generated cache key
+     */
+    Request.prototype.then = function(fulfill, reject){
+      return this.end(function (err, response, key) {
+        err ? reject(err) : fulfill(response, key);
+      });
+    }
+
+    /**
      * An alias for the .end function because I use ._end and .end for other things
      */
     Request.prototype.execute = Request.prototype.end;
