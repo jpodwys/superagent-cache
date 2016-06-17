@@ -164,6 +164,24 @@ Same as superagent except that superagent's response object will be cached.
 
 Same as superagent except that the generated cache key will be automatically invalidated when these `HTTP` verbs are used.
 
+## .then(resolve, reject)
+
+In its [`1.3.0` release](https://github.com/visionmedia/superagent/releases/tag/v1.3.0), superagent added fake promise support in the form of a `.then()` chainable that accepts two functions. Before `2.x` (which superagent-cache does not yet support), this function does not return a real promise. Rather, it calls `.end()` internally and then decides which function (`resolve` or `reject`) to call.
+
+I've overwritten superagent's `.then()` so that the provided `resolve` function accepts the generate cache key as follows:
+
+```javascript
+superagent
+  .get(uri)
+  .then(function (response, key){
+    // handle response--key is available if desired
+  }, function (err){
+    // handle the error
+  }
+);
+
+```
+
 ## .end(callback ([err,] response [, key]))
 
 Same as superagent except it optionally exposes the key superagent-cache generates as the third param in the callback's argument list. See the [usage example](#end-callback-argument-list-options) for a more detailed explanation.

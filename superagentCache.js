@@ -107,6 +107,15 @@ module.exports = function(agent, cache, defaults){
     Request.prototype.execute = Request.prototype.end;
 
     /**
+     * Overwrites superagent's fake promise support and adds the generated cache key
+     */
+    Request.prototype.then = function(fulfill, reject){
+      return this.end(function (err, response, key) {
+        err ? reject(err) : fulfill(response, key);
+      });
+    }
+
+    /**
      * Wraps the .end function so that .resetProps gets called--callable so that no caching logic takes place
      */
     Request.prototype._end = function(cb){
