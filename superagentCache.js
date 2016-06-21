@@ -106,7 +106,7 @@ module.exports = function(agent, cache, defaults){
      * Only applies if Request.prototype.promise is not set
      * Fixes this isse: https://github.com/jpodwys/superagent-cache/issues/38
      */
-    if(!Request.promise){
+    if(!Request.prototype.promise){
       Request.prototype.then = function(fulfill, reject){
         return this.end(function (err, response, key) {
           err ? reject(err) : fulfill(response, key);
