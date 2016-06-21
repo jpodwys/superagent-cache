@@ -103,11 +103,15 @@ module.exports = function(agent, cache, defaults){
 
     /**
      * Overwrites superagent's fake promise support and adds the generated cache key
+     * Only applies if Request.prototype.promise is not set
+     * Fixes this isse: https://github.com/jpodwys/superagent-cache/issues/38
      */
-    Request.prototype.then = function(fulfill, reject){
-      return this.end(function (err, response, key) {
-        err ? reject(err) : fulfill(response, key);
-      });
+    if(!Request.promise){
+      Request.prototype.then = function(fulfill, reject){
+        return this.end(function (err, response, key) {
+          err ? reject(err) : fulfill(response, key);
+        });
+      }
     }
 
     /**
