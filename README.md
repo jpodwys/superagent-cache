@@ -168,6 +168,8 @@ Same as superagent except that the generated cache key will be automatically inv
 
 In its [`1.3.0` release](https://github.com/visionmedia/superagent/releases/tag/v1.3.0), superagent added fake promise support in the form of a `.then()` chainable that accepts two functions. Before superagent `2.x`, this function does not return a real promise. Rather, it calls `.end()` internally and then decides which function (`resolve` or `reject`) to call. (superagent-cache does not yet support superagent `2.x`.)
 
+> Should work with [`superagent-promise`](https://github.com/lightsofapollo/superagent-promise), [`superagent-bluebird-promise`](https://github.com/KyleAMathews/superagent-bluebird-promise), and [`superagent-promise-plugin`](https://github.com/jomaxx/superagent-promise-plugin) (perhaps others as well).
+
 I've overwritten superagent's `.then()` so that the provided `resolve` function accepts the generate cache key as follows:
 
 ```javascript
