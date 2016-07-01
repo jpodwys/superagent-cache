@@ -14,6 +14,7 @@ module.exports = function(agent, cache, defaults){
   if(!superagent.patchedBySuperagentCache){
     superagent.cache = (cache && cache.get) ? cache : new (require('cache-service-cache-module'))(cache);
     superagent.defaults = defaults || {};
+    superagent.pendingRequests = {};
     var Request = superagent.Request;
     var props = utils.resetProps(superagent.defaults);
     var supportedMethods = ['GET', 'HEAD', 'POST', 'PUT', 'DELETE'];
@@ -93,6 +94,15 @@ module.exports = function(agent, cache, defaults){
     }
 
     /**
+     * 
+     *
+     */
+    Request.prototype.handleDuplicates = function(handleDuplicates){
+      props.handleDuplicates = handleDuplicates;
+      return this;
+    }
+
+    /**
      * Initialize a background refresh for the generated key and value
      * @param {boolean | function} backgroundRefresh
      */
@@ -146,8 +156,16 @@ module.exports = function(agent, cache, defaults){
             }
             else{
               if(curProps.doQuery){
+                if(curProps.handleDuplicates){
+                  if(!superagent.pendingRequests[key]){
+                    superagent.pendingRequests[key] = [];
+                  } else {
+                    return superagent.pendingRequests[key].push(cb);
+                  }
+                }
                 _this._end(function (err, response){
                   if(err){
+                    utils.handlePendingRequests(curProps, superagent, key, err, response);
                     return utils.callbackExecutor(cb, err, response, key);
                   }
                   else if(!err && response){
@@ -167,10 +185,12 @@ module.exports = function(agent, cache, defaults){
                         refresh = utils.getBackgroundRefreshFunction(superagent, curProps);
                       }
                       superagent.cache.set(key, response, curProps.expiration, refresh, function (){
+                        utils.handlePendingRequests(curProps, superagent, key, err, response);
                         return utils.callbackExecutor(cb, err, response, key);
                       });
                     }
                     else{
+                      delete superagent.pendingRequests[key];
                       return utils.callbackExecutor(cb, err, response, key);
                     }
                   }
