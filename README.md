@@ -321,7 +321,7 @@ Tells superagent-cache to perform an ajax call regardless of whether the generat
 
 ## .preventDuplicateCalls(bool)
 
-When activated, superagent-cache will keep track of all pending AJAX calls. If a call is attempted while an identical call is already pending, the duplicate call will not be made. When the original AJAX call returns, it's response will be used to respond to all duplicate calls.
+When activated, superagent-cache will keep track of all pending AJAX calls. If a call is attempted while an identical call is already pending, the duplicate call will not be made. When the original AJAX call returns, its response will be used to respond to all duplicate calls.
 
 #### Arguments
 
