@@ -157,7 +157,7 @@ module.exports = {
   },
 
   handlePendingRequests: function(curProps, superagent, key, err, response){
-    if(curProps.handleDuplicates){
+    if(curProps.preventDuplicateCalls){
       if(superagent.pendingRequests[key] && (!this.isEmpty(response) || curProps.cacheWhenEmpty)){
         var pendingRequests = superagent.pendingRequests[key];
         while(pendingRequests.length > 0){
@@ -182,7 +182,7 @@ module.exports = {
       pruneOptions: d.pruneOptions,
       responseProp: d.responseProp,
       expiration: d.expiration,
-      handleDuplicates: d.handleDuplicates,
+      preventDuplicateCalls: d.preventDuplicateCalls,
       backgroundRefresh: d.backgroundRefresh
     };
   },

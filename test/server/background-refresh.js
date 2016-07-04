@@ -57,6 +57,14 @@ app.get('/count', function(req, res){
   res.send(200, {count: count});
 });
 
+var delayCount = 0;
+app.get('/delay', function(req, res){
+  delayCount++;
+  setTimeout(function(){
+    res.send(200, {delayCount: delayCount});
+  }, 250);
+});
+
 app.listen(3000);
 
 describe('superagentCache', function(){

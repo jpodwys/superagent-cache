@@ -70,23 +70,40 @@ describe('superagentCache', function(){
     superagent.cache.flush();
   });
 
-  describe('forceUpdate tests', function () {
+  describe('preventDuplicateCalls tests', function () {
 
-  it('.forceUpdate() should prevent the module from hitting the cache', function (done) {
-    superagent
-      .get('localhost:3000/count')
-      .end(function (err, response, key){
-        superagent.cache.get(key, function (err, response){
-          expect(response.body.count).toBe(1);
-          superagent
-            .get('localhost:3000/count')
-            .forceUpdate()
-            .end(function (err, response, key){
-              expect(response.body.count).toBe(2);
-              done();
-            });
-          });
-        });
-      });
+    it('.preventDuplicateCalls() should prevent identical ajax calls from executing concurrently', function (done) {
+      var finishedCount = 0;
+      var finished = function(){
+        finishedCount++;
+        if(finishedCount === 3){
+          done();
+        }
+      }
+      superagent
+        .get('localhost:3000/delay')
+        .preventDuplicateCalls()
+        .end(function (err, response, key){
+          expect(response.body.delayCount).toBe(1);
+          finished();
+        }
+      );
+      superagent
+        .get('localhost:3000/delay')
+        .preventDuplicateCalls()
+        .end(function (err, response, key){
+          expect(response.body.delayCount).toBe(1);
+          finished();
+        }
+      );
+      superagent
+        .get('localhost:3000/delay')
+        .preventDuplicateCalls()
+        .end(function (err, response, key){
+          expect(response.body.delayCount).toBe(1);
+          finished();
+        }
+      );  
+    });
   });
 });

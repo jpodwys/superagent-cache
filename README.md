@@ -124,6 +124,7 @@ All options that can be passed to the `defaults` `require` param can be overwrit
 * cacheWhenEmpty
 * doQuery
 * forceUpdate
+* preventDuplicateCalls
 * backgroundRefresh
 
 # Supported Caches
@@ -313,6 +314,14 @@ Tell superagent-cache whether to perform an ajax call if the generated cache key
 ## .forceUpdate(bool)
 
 Tells superagent-cache to perform an ajax call regardless of whether the generated cache key is found. By default, forceUpdate is false.
+
+#### Arguments
+
+* bool: boolean, default: false
+
+## .preventDuplicateCalls(bool)
+
+When activated, superagent-cache will keep track of all pending AJAX calls. If a call is attempted while an identical call is already pending, the duplicate call will not be made. When the original AJAX call returns, it's response will be used to respond to all duplicate calls.
 
 #### Arguments
 

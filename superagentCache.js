@@ -94,11 +94,13 @@ module.exports = function(agent, cache, defaults){
     }
 
     /**
-     * 
-     *
+     * Whether to execute identical network calls.
+     * When used, calls made for resources that are already pending will not be made, but will
+     * be responded to with the response from the already pending call.
+     * @param {boolean} preventDuplicateCalls
      */
-    Request.prototype.handleDuplicates = function(handleDuplicates){
-      props.handleDuplicates = handleDuplicates;
+    Request.prototype.preventDuplicateCalls = function(preventDuplicateCalls){
+      props.preventDuplicateCalls = (typeof preventDuplicateCalls === 'boolean') ? preventDuplicateCalls : true;
       return this;
     }
 
@@ -156,7 +158,7 @@ module.exports = function(agent, cache, defaults){
             }
             else{
               if(curProps.doQuery){
-                if(curProps.handleDuplicates){
+                if(curProps.preventDuplicateCalls){
                   if(!superagent.pendingRequests[key]){
                     superagent.pendingRequests[key] = [];
                   } else {
