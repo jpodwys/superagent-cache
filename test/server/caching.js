@@ -42,6 +42,10 @@ app.put('/one', function(req, res){
   res.send(200, {key: 'put'});
 });
 
+app.patch('/one', function(req, res){
+  res.send(200, {key: 'patch'});
+});
+
 app.delete('/one', function(req, res){
   res.send(200, {key: 'delete'});
 });
@@ -161,6 +165,28 @@ describe('superagentCache', function(){
               .put('localhost:3000/one')
               .end(function (err, response, key){
                 expect(response.body.key).toBe('put');
+                superagent.cache.get(key, function (err, response) {
+                  expect(response).toBe(null);
+                  done();
+                });
+              }
+            );
+          });
+        }
+      );
+    });
+
+    it('.get() then .patch() should invalidate cache', function (done) {
+      superagent
+        .get('localhost:3000/one')
+        .end(function (err, response, key){
+          expect(response.body.key).toBe('one');
+          superagent.cache.get(key, function (err, response) {
+            expect(response.body.key).toBe('one');
+            superagent
+              .patch('localhost:3000/one')
+              .end(function (err, response, key){
+                expect(response.body.key).toBe('patch');
                 superagent.cache.get(key, function (err, response) {
                   expect(response).toBe(null);
                   done();

@@ -16,7 +16,7 @@ module.exports = function(agent, cache, defaults){
     superagent.defaults = defaults || {};
     var Request = superagent.Request;
     var props = utils.resetProps(superagent.defaults);
-    var supportedMethods = ['GET', 'HEAD', 'POST', 'PUT', 'DELETE'];
+    var supportedMethods = ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'];
     var cacheableMethods = ['GET', 'HEAD'];
     superagent.patchedBySuperagentCache = true;
 

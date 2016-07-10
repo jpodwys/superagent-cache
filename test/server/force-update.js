@@ -24,6 +24,10 @@ app.put('/one', function(req, res){
   res.send(200, {key: 'put'});
 });
 
+app.patch('/one', function(req, res){
+  res.send(200, {key: 'patch'});
+});
+
 app.delete('/one', function(req, res){
   res.send(200, {key: 'delete'});
 });
