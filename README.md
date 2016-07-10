@@ -28,7 +28,7 @@ Require and instantiate superagent-cache as follows to get the [default configur
 ```javascript
 var superagent = require('superagent-cache')();
 ```
-Now you're ready for the magic! All of your existing `GET` and `HEAD` requests will be cached with no extra bloat in your queries! Any matching `DELETE`, `POST`, `PUT` or `PATCH` requests will automatically invalidate the associated cache key and value.
+Now you're ready for the magic! All of your existing `GET` and `HEAD` requests will be cached with no extra bloat in your queries! Any matching `DELETE`, `POST`, `PUT`, or `PATCH` requests will automatically invalidate the associated cache key and value.
 ```javascript
 superagent
   .get(uri)
