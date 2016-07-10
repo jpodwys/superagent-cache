@@ -227,7 +227,7 @@ If you need to dig several layers into superagent's response, you can do so by p
 
 ```javascript
 var prune = function(r){
-  if(r && r.ok && r.body && r.body.user) ? r.body.user : null;
+  return (r && r.ok && r.body && r.body.user) ? r.body.user : null;
 }
 
 //response will now be replaced with r.body.user or null
