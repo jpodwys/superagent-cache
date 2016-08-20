@@ -321,6 +321,10 @@ Tells superagent-cache to perform an ajax call regardless of whether the generat
 
 ## .preventDuplicateCalls(bool)
 
+> Do not use this feature to band-aid making duplicate requests from various parts of your application. If that's the state your application is in, consolidate duplicate requests into a single service layer and get data into the necessary spots via eventing or data binding. 
+
+> I added this feature to prevent duplicate calls when dynamically prefetching content based on user interactions. In my use case, I prefetch content when users hover over a link so that when they click the link it's already in the cache. In the event that the user clicks the link before the prefetch AJAX call has completed, I wanted to prevent a second network call from occurring.
+
 When activated, superagent-cache will keep track of all pending AJAX calls. If a call is attempted while an identical call is already pending, the duplicate call will not be made. When the original AJAX call returns, its response will be used to respond to all duplicate calls.
 
 #### Arguments
