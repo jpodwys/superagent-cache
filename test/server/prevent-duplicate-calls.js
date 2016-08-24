@@ -62,6 +62,14 @@ app.get('/delay', function(req, res){
   }, 250);
 });
 
+var delayCount2 = 0;
+app.get('/delay2', function(req, res){
+  delayCount2++;
+  setTimeout(function(){
+    res.send(200, {delayCount: delayCount2});
+  }, 250);
+});
+
 app.listen(3000);
 
 describe('superagentCache', function(){
@@ -104,6 +112,37 @@ describe('superagentCache', function(){
           finished();
         }
       );  
+    });
+
+    it('.preventDuplicateCalls() should not prevent identical ajax calls from executing non-concurrently', function (done) {
+      var finishedCount = 0;
+      var finished = function(){
+        finishedCount++;
+        if(finishedCount === 3){
+          done();
+        }
+      }
+      superagent
+        .get('localhost:3000/delay2')
+        .preventDuplicateCalls()
+        .end(function (err, response, key){
+          expect(response.body.delayCount).toBe(1);
+          finished();
+          superagent
+            .get('localhost:3000/delay2')
+            .preventDuplicateCalls()
+            .end(function (err, response, key){
+              expect(response.body.delayCount).toBe(2);
+              finished();
+              superagent
+                .get('localhost:3000/delay2')
+                .preventDuplicateCalls()
+                .end(function (err, response, key){
+                  expect(response.body.delayCount).toBe(3);
+                  finished();
+              });
+          });
+      });
     });
   });
 });
