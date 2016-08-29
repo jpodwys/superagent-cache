@@ -159,11 +159,11 @@ module.exports = {
   handlePendingRequests: function(curProps, superagent, key, err, response){
     if(curProps.preventDuplicateCalls){
       if(superagent.pendingRequests[key] && (!this.isEmpty(response) || curProps.cacheWhenEmpty)){
+        var self = this;
         var pendingRequests = superagent.pendingRequests[key];
-        while(pendingRequests.length > 0){
-          this.callbackExecutor(pendingRequests[0], err, response, key);
-          pendingRequests.shift();
-        }
+        pendingRequests.forEach(function (cb){
+          self.callbackExecutor(cb, err, response, key);
+        });
       }
       delete superagent.pendingRequests[key];
     }
