@@ -77,6 +77,22 @@ app.get('/count', function(req, res){
   res.send(200, {count: count});
 });
 
+var delayCount = 0;
+app.get('/delay', function(req, res){
+  delayCount++;
+  setTimeout(function(){
+    res.send(200, {delayCount: delayCount});
+  }, 250);
+});
+
+var delayCount2 = 0;
+app.get('/delay2', function(req, res){
+  delayCount2++;
+  setTimeout(function(){
+    res.send(200, {delayCount: delayCount2});
+  }, 250);
+});
+
 app.listen(3000);
 
 function checkBrowserStorage(key, value){

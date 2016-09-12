@@ -5,7 +5,7 @@
   "main": "superagentCache.js",
   "dependencies": {
     "superagent": "1.7.2",
-    "cache-service-cache-module": "1.2.3"
+    "cache-service-cache-module": "1.2.4"
   },
   "devDependencies": {
     "es6-promise": "3.0.2",

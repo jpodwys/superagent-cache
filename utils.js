@@ -156,6 +156,19 @@ module.exports = {
     return newObj;
   },
 
+  handlePendingRequests: function(curProps, superagent, key, err, response){
+    if(curProps.preventDuplicateCalls){
+      if(superagent.pendingRequests[key] && (!this.isEmpty(response) || curProps.cacheWhenEmpty)){
+        var self = this;
+        var pendingRequests = superagent.pendingRequests[key];
+        pendingRequests.forEach(function (cb){
+          self.callbackExecutor(cb, err, response, key);
+        });
+      }
+      delete superagent.pendingRequests[key];
+    }
+  },
+
   /**
    * Reset superagent-cache's default query properties using the defaults object
    * @param {object} d
@@ -169,6 +182,7 @@ module.exports = {
       pruneOptions: d.pruneOptions,
       responseProp: d.responseProp,
       expiration: d.expiration,
+      preventDuplicateCalls: d.preventDuplicateCalls,
       backgroundRefresh: d.backgroundRefresh
     };
   },

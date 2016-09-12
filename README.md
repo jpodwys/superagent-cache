@@ -124,6 +124,7 @@ All options that can be passed to the `defaults` `require` param can be overwrit
 * cacheWhenEmpty
 * doQuery
 * forceUpdate
+* preventDuplicateCalls
 * backgroundRefresh
 
 # Supported Caches
@@ -226,7 +227,7 @@ If you need to dig several layers into superagent's response, you can do so by p
 
 ```javascript
 var prune = function(r){
-  if(r && r.ok && r.body && r.body.user) ? r.body.user : null;
+  return (r && r.ok && r.body && r.body.user) ? r.body.user : null;
 }
 
 //response will now be replaced with r.body.user or null
@@ -313,6 +314,18 @@ Tell superagent-cache whether to perform an ajax call if the generated cache key
 ## .forceUpdate(bool)
 
 Tells superagent-cache to perform an ajax call regardless of whether the generated cache key is found. By default, forceUpdate is false.
+
+#### Arguments
+
+* bool: boolean, default: false
+
+## .preventDuplicateCalls(bool)
+
+> If you're considering using this feature, please first consider whether you can instead consolidate duplicate requests into a single service layer and get data into the necessary spots via eventing or data binding.
+
+> I added this feature to prevent duplicate calls when dynamically prefetching content based on user interactions. In my use case, I prefetch content when users hover over a link so that when they click the link it's already in the cache. In the event that the user clicks the link before the prefetch AJAX call has completed, I wanted to prevent a second network call from occurring.
+
+When activated, superagent-cache will keep track of all pending AJAX calls. If a call is attempted while an identical call is already pending, the duplicate call will not be made. When the original AJAX call returns, its response will be used to respond to all duplicate calls.
 
 #### Arguments
 
