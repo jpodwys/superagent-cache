@@ -182,6 +182,7 @@ module.exports = {
       pruneOptions: d.pruneOptions,
       responseProp: d.responseProp,
       expiration: d.expiration,
+      forceUpdate: d.forceUpdate,
       preventDuplicateCalls: d.preventDuplicateCalls,
       backgroundRefresh: d.backgroundRefresh
     };
