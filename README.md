@@ -2,7 +2,7 @@
 
 Superagent with flexible built-in caching.
 
-Currently compatible with superagent `1.x`.
+Currently tested against superagent `1.x`.
 
 Upgrading from an older version or seeing a bug? Please see the [Breaking Change History](#breaking-change-history) section.
 
