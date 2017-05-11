@@ -121,7 +121,7 @@ module.exports = function(agent, cache, defaults){
     /**
      * Wraps the .end function so that .resetProps gets called--callable so that no caching logic takes place
      */
-    Request.prototype._superagenCache_originalEnd = function(cb){
+    Request.prototype._superagentCache_originalEnd = function(cb){
       props = utils.resetProps(superagent.defaults);
       this._superagentCache_execute(cb);
     }
@@ -152,7 +152,7 @@ module.exports = function(agent, cache, defaults){
                     return superagent.pendingRequests[key].push(cb);
                   }
                 }
-                _this._superagenCache_originalEnd(function (err, response){
+                _this._superagentCache_originalEnd(function (err, response){
                   if(err){
                     utils.handlePendingRequests(curProps, superagent, key, err, response);
                     return utils.callbackExecutor(cb, err, response, key);
@@ -192,7 +192,7 @@ module.exports = function(agent, cache, defaults){
           });
         }
         else{
-          this._superagenCache_originalEnd(function (err, response){
+          this._superagentCache_originalEnd(function (err, response){
             if(err){
               return utils.callbackExecutor(cb, err, response, key);
             }
@@ -207,7 +207,7 @@ module.exports = function(agent, cache, defaults){
         }
       }
       else{
-        this._superagenCache_originalEnd(function (err, response){
+        this._superagentCache_originalEnd(function (err, response){
           return utils.callbackExecutor(cb, err, response, undefined);
         });
       }

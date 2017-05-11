@@ -2,6 +2,8 @@
 
 Superagent with flexible built-in caching.
 
+Now compatible with superagent `2.x` and `3.x`
+
 > Note: superagent-cache is a global patch for superagent. If you prefer the same built-in caching as a superagent plugin, see [superagent-cache-plugin](https://github.com/jpodwys/superagent-cache-plugin).
 
 Upgrading from an older version or seeing a bug? Please see the [Breaking Change History](#breaking-change-history) section.
@@ -323,7 +325,7 @@ Tell the underlying `cache` provided in the `require` command to enable backgrou
 
 * value: boolean || function || undefined, default: true
 
-## ._superagenCache_originalEnd(callback (err, response))
+## ._superagentCache_originalEnd(callback (err, response))
 
 This is a convenience method that allows you to skip all caching logic and use superagent as normal.
 
@@ -486,6 +488,14 @@ var superagent = require('superagent-cache')(null, cacheModuleConfig);
 The `defaults` object can be passed as the third param at any time. It does not affect the `superagent` or `cache` params. You can see a brief demo [here](#how-do-i-use-a-custom-configuration) and a list of all the options you can pass in the `defaults` object [here](#available-configuration-options).
 
 # Breaking Change History
+
+#### 2.0.0
+
+* Now compatible with superagent `2.x` and `3.x`
+* `._end` is now `._superagentCache_originalEnd` to prevent future naming colisions
+* `.pruneParams` is now `.pruneQuery` for clarity
+* `.pruneOptions` is now `.pruneHeader` for clarity
+* The `resolve` function passed to `.then` no longer exposes the generated cache key like it did when using superagent `^1.3.0` with superagent-cache `^1.5.0` (but using `.end` still does)
 
 #### 1.3.5
 
