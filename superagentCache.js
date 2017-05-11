@@ -3,13 +3,13 @@ var utils = require('./utils');
 /**
  * superagentCache constructor
  * @constructor
- * @param {superagent} agent (optional)
+ * @param {superagent} superagent
  * @param {cache module} cache (optional)
  * @param {object} defaults (optional)
  */
-module.exports = function(agent, cache, defaults){
+module.exports = function(superagent, cache, defaults){
 
-  var superagent = (agent) ? agent : require('superagent');
+  if(!superagent) throw 'superagent-cache requires a superagent instance.';
 
   if(!superagent.patchedBySuperagentCache){
     superagent.cache = (cache && cache.get) ? cache : new (require('cache-service-cache-module'))(cache);
@@ -212,10 +212,6 @@ module.exports = function(agent, cache, defaults){
         });
       }
     }
-  }
-
-  if(!agent){
-    return superagent;
   }
 
 }

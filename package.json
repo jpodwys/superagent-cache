@@ -4,10 +4,10 @@
   "description": "Superagent with flexible built-in caching.",
   "main": "superagentCache.js",
   "dependencies": {
-    "superagent": "3.x",
     "cache-service-cache-module": "1.x"
   },
   "devDependencies": {
+    "superagent": "3.x",
     "es6-promise": "3.0.2",
     "expect": "1.6.0",
     "express": "3.4.3",

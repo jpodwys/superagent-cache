@@ -30,7 +30,8 @@ Upgrading from an older version or seeing a bug? Please see the [Breaking Change
 
 Require and instantiate superagent-cache as follows to get the [default configuration](#what-does-the-default-configuration-give-me):
 ```javascript
-var superagent = require('superagent-cache')();
+var superagent = require('superagent');
+require('superagent-cache')(superagent);
 ```
 Now you're ready for the magic! All of your existing `GET` and `HEAD` requests will be cached with no extra bloat in your queries! Any matching `DELETE`, `POST`, `PUT`, or `PATCH` requests will automatically invalidate the associated cache key and value.
 ```javascript
@@ -91,11 +92,11 @@ By default, `superagent-cache` stores data in a bundled instance of [cacheModule
 
 # What Does the Default Configuration Give Me?
 
-You get the 'default configuration' when you don't provide any params to the `require('superagent-cache')()` command. This will return a fresh instance of `superagent` and bundle an instance of [cacheModule](https://github.com/jpodwys/cache-service-cache-module) for storing data. `cacheModule` is a slim, in-memory cache.
+You get the 'default configuration' when you only provide a superagent instance to the `require('superagent-cache')()` command. This will patch the passed instance of `superagent` and bundle an instance of [cacheModule](https://github.com/jpodwys/cache-service-cache-module) for storing data. `cacheModule` is a slim, in-memory cache.
 
 # How Do I Use a Custom Configuration?
 
-To use a custom configuraiton, take advantage of the the three optional params you can hand to `superagent-cache`'s [`require` command](#user-content-requiresuperagent-cachesuperagent-cache) (`superagent`, `cache`, and `defaults`) as follows:
+To use a custom configuraiton, take advantage of the the two optional params you can hand to `superagent-cache`'s [`require` command](#user-content-requiresuperagent-cachesuperagent-cache) (`cache`, and `defaults`) as follows:
 
 ```javascript
 //Require superagent and the cache module I want
@@ -108,7 +109,7 @@ var defaults = {cacheWhenEmpty: false, expiration: 900};
 require('superagent-cache')(superagent, redisCache, defaults);
 ```
 
-This example allows you to provide your own instance of `superagent` to be patched as well as allowing you to pass in your own, pre-instantiated cache and some defaults for superagent-cache to use with all queries. Here's a list of [supported caches](#supported-caches).
+This example patches your instance of `superagent` as allowing you to pass in your own, pre-instantiated cache and some defaults for superagent-cache to use with all queries. Here's a list of [supported caches](#supported-caches).
 
 The `cache` param can be either a pre-instantiated cache module, or a [`cacheModuleConfig` object](https://github.com/jpodwys/cache-service-cache-module#cache-module-configuration-options) to be used with superagent-cache's bundled [`cacheModule`](https://github.com/jpodwys/cache-service-cache-module) instance.
 
@@ -449,12 +450,7 @@ However, you can only get it when you pass 3 params to the callback's argument l
 
 ## Various ways of requiring superagent-cache
 
-#### When no params are passed
-
-```javascript
-//...it will return a patched superagent instance and create a cache-service instance with the default configuration
-var superagent = require('superagent-cache')();
-```
+> NOTE: You must pass your own superagent instance or superagent-cache will throw an error.
 
 #### When only `superagent` is passed
 
@@ -464,23 +460,25 @@ var superagent = require('superagent');
 require('superagent-cache')(superagent)
 ```
 
-#### When only `cache` is passed
+#### When `superagent` and `cache` are passed
 
 > Example 1
 
 ```javascript
-//...it will return a patched superagent instance and consume cache as its data store
+//...it will patched the provided superagent instance and consume cache as its data store
+var superagent = require('superagent');
 var redisModule = require('cache-service-redis');
 var redisCache = new redisModule({redisEnv: 'REDISCLOUD_URL'});
-var superagent = require('superagent-cache')(null, redisCache);
+var superagent = require('superagent-cache')(superagent, redisCache);
 ```
 
 > Example 2
 
 ```javascript
-//...it will return a patched superagent instance and consume cache as its cacheModuleConfig for use with the bundled instance of cacheModule
+//...it will patched the provided superagent instance and consume cache as its cacheModuleConfig for use with the bundled instance of cacheModule
+var superagent = require('superagent');
 var cacheModuleConfig = {storage: 'session', defaultExpiration: 60};
-var superagent = require('superagent-cache')(null, cacheModuleConfig);
+var superagent = require('superagent-cache')(superagent, cacheModuleConfig);
 ```
 
 #### With `defaults`
@@ -492,6 +490,7 @@ The `defaults` object can be passed as the third param at any time. It does not 
 #### 2.0.0
 
 * Now compatible with superagent `2.x` and `3.x`
+* Because superagent-cache is now compatible with superagent 1, 2, and 3, it does not bundle an instance of superagent. As a result, you must always provide your own instance to be patched.
 * `._end` is now `._superagentCache_originalEnd` to prevent future naming colisions
 * `.pruneParams` is now `.pruneQuery` for clarity
 * `.pruneOptions` is now `.pruneHeader` for clarity
