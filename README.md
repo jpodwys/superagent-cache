@@ -2,7 +2,7 @@
 
 Superagent with flexible built-in caching.
 
-Now compatible with superagent `2.x` and `3.x`
+Now compatible with superagent `2.x` and `3.x`.
 
 > Note: superagent-cache is a global patch for superagent. If you prefer the same built-in caching as a superagent plugin, see [superagent-cache-plugin](https://github.com/jpodwys/superagent-cache-plugin).
 
