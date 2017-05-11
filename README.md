@@ -120,8 +120,8 @@ All options that can be passed to the `defaults` `require` param can be overwrit
 
 * responseProp
 * prune
-* pruneParams
-* pruneOptions
+* pruneQuery
+* pruneHeader
 * expiration
 * cacheWhenEmpty
 * doQuery
@@ -223,9 +223,9 @@ superagent
 );
 ```
 
-## .pruneParams(params)
+## .pruneQuery(params)
 
-In the event that you need certain query params to execute a query but cannot have those params as part of your cache key (useful when security or time-related params are sent), use `.pruneParams()` to remove those properties. Pass `.pruneParams()` an array containing the param keys you want omitted from the cache key.
+In the event that you need certain query params to execute a query but cannot have those params as part of your cache key (useful when security or time-related params are sent), use `.pruneQuery()` to remove those properties. Pass `.pruneQuery()` an array containing the param keys you want omitted from the cache key.
 
 #### Arguments
 
@@ -239,16 +239,16 @@ In the event that you need certain query params to execute a query but cannot ha
 superagent
   .get(uri)
   .query(query)
-  .pruneParams(['token'])
+  .pruneQuery(['token'])
   .end(function (error, response){
     // handle response
   }
 );
 ```
 
-## .pruneOptions(options)
+## .pruneHeader(options)
 
-This function works just like the `.pruneParams()` funciton except that it modifies the arguments passed to the `.set()` chainable method (headers) rather than those passed to the `.query()` chainable method.
+This function works just like the `.pruneQuery()` funciton except that it modifies the arguments passed to the `.set()` chainable method (headers) rather than those passed to the `.query()` chainable method.
 
 #### Arguments
 
@@ -262,7 +262,7 @@ This function works just like the `.pruneParams()` funciton except that it modif
 superagent
   .get(uri)
   .set(options)
-  .pruneOptions(['token'])
+  .pruneHeader(['token'])
   .end(function (error, response){
     // handle response
   }

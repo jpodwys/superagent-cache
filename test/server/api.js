@@ -40,11 +40,11 @@ app.get('/false', function(req, res){
 });
 
 app.get('/params', function(req, res){
-  res.send(200, {pruneParams: req.query.pruneParams, otherParams: req.query.otherParams});
+  res.send(200, {pruneQuery: req.query.pruneQuery, otherParams: req.query.otherParams});
 });
 
 app.get('/options', function(req, res){
-  res.send(200, {pruneOptions: req.get('pruneOptions'), otherOptions: req.get('otherOptions')});
+  res.send(200, {pruneHeader: req.get('pruneHeader'), otherOptions: req.get('otherOptions')});
 });
 
 app.get('/redirect', function(req, res){
@@ -176,65 +176,65 @@ describe('superagentCache', function(){
       );
     });
 
-    it('.get() .query(object) .pruneParams() .end() should query with all params but create a key without the indicated params', function (done) {
+    it('.get() .query(object) .pruneQuery() .end() should query with all params but create a key without the indicated params', function (done) {
       superagent
         .get('localhost:3000/params')
-        .query({pruneParams: true, otherParams: false})
-        .pruneParams(['pruneParams'])
+        .query({pruneQuery: true, otherParams: false})
+        .pruneQuery(['pruneQuery'])
         .end(function (err, response, key){
-          expect(response.body.pruneParams).toBe('true');
+          expect(response.body.pruneQuery).toBe('true');
           expect(response.body.otherParams).toBe('false');
-          expect(key.indexOf('pruneParams')).toBe(-1);
+          expect(key.indexOf('pruneQuery')).toBe(-1);
           expect(key.indexOf('otherParams')).toBeGreaterThan(-1);
           done();
         }
       );
     });
 
-    it('.get() .query(string&string) .pruneParams() .end() should query with all params but create a key without the indicated params', function (done) {
+    it('.get() .query(string&string) .pruneQuery() .end() should query with all params but create a key without the indicated params', function (done) {
       superagent
         .get('localhost:3000/params')
-        .query('pruneParams=true&otherParams=false')
-        .pruneParams(['pruneParams'])
+        .query('pruneQuery=true&otherParams=false')
+        .pruneQuery(['pruneQuery'])
         .end(function (err, response, key){
-          expect(response.body.pruneParams).toBe('true');
+          expect(response.body.pruneQuery).toBe('true');
           expect(response.body.otherParams).toBe('false');
-          expect(key.indexOf('pruneParams')).toBe(-1);
+          expect(key.indexOf('pruneQuery')).toBe(-1);
           expect(key.indexOf('otherParams')).toBeGreaterThan(-1);
           done();
         }
       );
     });
 
-    it('.get() .query(string) .query(string) .pruneParams() .end() should query with all params but create a key without the indicated params', function (done) {
+    it('.get() .query(string) .query(string) .pruneQuery() .end() should query with all params but create a key without the indicated params', function (done) {
       superagent
         .get('localhost:3000/params')
-        .query('pruneParams=true')
+        .query('pruneQuery=true')
         .query('otherParams=false')
-        .pruneParams(['pruneParams'])
+        .pruneQuery(['pruneQuery'])
         .end(function (err, response, key){
-          expect(response.body.pruneParams).toBe('true');
+          expect(response.body.pruneQuery).toBe('true');
           expect(response.body.otherParams).toBe('false');
-          expect(key.indexOf('pruneParams')).toBe(-1);
+          expect(key.indexOf('pruneQuery')).toBe(-1);
           expect(key.indexOf('otherParams')).toBeGreaterThan(-1);
           done();
         }
       )
     });
 
-    it('.get() .pruneOptions() .end() should query with all options but create a key without the indicated options', function (done) {
+    it('.get() .pruneHeader() .end() should query with all options but create a key without the indicated options', function (done) {
       superagent
         .get('localhost:3000/options')
-        .set({pruneOptions: true, otherOptions: false})
-        .pruneOptions(['pruneOptions'])
+        .set({pruneHeader: true, otherOptions: false})
+        .pruneHeader(['pruneHeader'])
         .end(function (err, response, key){
           //console.log(key);
-          expect(response.body.pruneOptions).toBe('true');
+          expect(response.body.pruneHeader).toBe('true');
           expect(response.body.otherOptions).toBe('false');
           //Before superagent 1.7.0, superagent converts headers to lower case. To be backwards compatible,
           //I check for lower as well as the upper case versions of the headers sent above
-          expect(key.indexOf('pruneoptions')).toBe(-1);
-          expect(key.indexOf('pruneOptions')).toBe(-1);
+          expect(key.indexOf('pruneHeader')).toBe(-1);
+          expect(key.indexOf('pruneHeader')).toBe(-1);
           var lowerOtherOptions = key.indexOf('otheroptions');
           var upperOtherOptions = key.indexOf('otherOptions');
           var otherOptionsIsPresent = (lowerOtherOptions > -1 || upperOtherOptions > -1);

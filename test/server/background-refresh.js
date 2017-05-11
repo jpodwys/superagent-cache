@@ -40,11 +40,11 @@ app.get('/false', function(req, res){
 });
 
 app.get('/params', function(req, res){
-  res.send(200, {pruneParams: req.query.pruneParams, otherParams: req.query.otherParams});
+  res.send(200, {pruneQuery: req.query.pruneQuery, otherParams: req.query.otherParams});
 });
 
 app.get('/options', function(req, res){
-  res.send(200, {pruneOptions: req.get('pruneOptions'), otherOptions: req.get('otherOptions')});
+  res.send(200, {pruneHeader: req.get('pruneHeader'), otherOptions: req.get('otherOptions')});
 });
 
 app.get('/redirect', function(req, res){
@@ -125,12 +125,12 @@ describe('superagentCache', function(){
     it('.get() .query(string&string) .end() background refresh should not work if the chainable is not used', function (done) {
       superagent
         .get('localhost:3000/params')
-        .query('pruneParams=true&otherParams=false')
-        .pruneParams(['pruneParams'])
+        .query('pruneQuery=true&otherParams=false')
+        .pruneQuery(['pruneQuery'])
         .end(function (err, response, key){
-          expect(response.body.pruneParams).toBe('true');
+          expect(response.body.pruneQuery).toBe('true');
           expect(response.body.otherParams).toBe('false');
-          expect(key.indexOf('pruneParams')).toBe(-1);
+          expect(key.indexOf('pruneQuery')).toBe(-1);
           expect(key.indexOf('otherParams')).toBeGreaterThan(-1);
           setTimeout(function(){
             superagent.cache.get(key, function (err, response){
@@ -145,19 +145,19 @@ describe('superagentCache', function(){
     it('.get() .query(string&string) .backgroundRefresh(true) .end() background refresh should refresh a key shortly before expiration', function (done) {
       superagent
         .get('localhost:3000/params')
-        .query('pruneParams=true&otherParams=false')
-        .pruneParams(['pruneParams'])
+        .query('pruneQuery=true&otherParams=false')
+        .pruneQuery(['pruneQuery'])
         .backgroundRefresh(true)
         .end(function (err, response, key){
-          expect(response.body.pruneParams).toBe('true');
+          expect(response.body.pruneQuery).toBe('true');
           expect(response.body.otherParams).toBe('false');
-          expect(key.indexOf('pruneParams')).toBe(-1);
+          expect(key.indexOf('pruneQuery')).toBe(-1);
           expect(key.indexOf('otherParams')).toBeGreaterThan(-1);
           setTimeout(function(){
             superagent.cache.get(key, function (err, response){
-              expect(response.body.pruneParams).toBe('true');
+              expect(response.body.pruneQuery).toBe('true');
               expect(response.body.otherParams).toBe('false');
-              expect(key.indexOf('pruneParams')).toBe(-1);
+              expect(key.indexOf('pruneQuery')).toBe(-1);
               expect(key.indexOf('otherParams')).toBeGreaterThan(-1);
               done();
             });

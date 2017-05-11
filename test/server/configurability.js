@@ -41,11 +41,11 @@ app.get('/false', function(req, res){
 });
 
 app.get('/params', function(req, res){
-  res.send(200, {pruneParams: req.query.pruneParams, otherParams: req.query.otherParams});
+  res.send(200, {pruneQuery: req.query.pruneQuery, otherParams: req.query.otherParams});
 });
 
 app.get('/options', function(req, res){
-  res.send(200, {pruneOptions: req.get('pruneOptions'), otherOptions: req.get('otherOptions')});
+  res.send(200, {pruneHeader: req.get('pruneHeader'), otherOptions: req.get('otherOptions')});
 });
 
 app.get('/redirect', function(req, res){

@@ -10,9 +10,9 @@ module.exports = {
     var cleanOptions = null;
     var params = this.getQueryParams(req);
     var options = this.getHeaderOptions(req);
-    if(cProps.pruneParams || cProps.pruneOptions){
-      cleanParams = (cProps.pruneParams) ? this.pruneObj(this.cloneObject(params), cProps.pruneParams) : params;
-      cleanOptions = (cProps.pruneOptions) ? this.pruneObj(this.cloneObject(options), cProps.pruneOptions, true) : options;
+    if(cProps.pruneQuery || cProps.pruneHeader){
+      cleanParams = (cProps.pruneQuery) ? this.pruneObj(this.cloneObject(params), cProps.pruneQuery) : params;
+      cleanOptions = (cProps.pruneHeader) ? this.pruneObj(this.cloneObject(options), cProps.pruneHeader, true) : options;
     }
     return JSON.stringify({
       nameSpace: agent.cache.nameSpace,
@@ -178,8 +178,8 @@ module.exports = {
       doQuery: (typeof d.doQuery === 'boolean') ? d.doQuery : true,
       cacheWhenEmpty: (typeof d.cacheWhenEmpty === 'boolean') ? d.cacheWhenEmpty : true,
       prune: d.prune,
-      pruneParams: d.pruneParams,
-      pruneOptions: d.pruneOptions,
+      pruneQuery: d.pruneQuery,
+      pruneHeader: d.pruneHeader,
       responseProp: d.responseProp,
       expiration: d.expiration,
       forceUpdate: d.forceUpdate,
@@ -199,8 +199,8 @@ module.exports = {
       var method = key.method.toLowerCase();
       var request = agent[method](key.uri)
         .doQuery(curProps.doQuery)
-        .pruneParams(curProps.pruneParams)
-        .pruneOptions(curProps.pruneOptions)
+        .pruneQuery(curProps.pruneQuery)
+        .pruneHeader(curProps.pruneHeader)
         .prune(curProps.prune)
         .responseProp(curProps.responseProp)
         .expiration(curProps.expiration)
