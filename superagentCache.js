@@ -114,29 +114,16 @@ module.exports = function(agent, cache, defaults){
     }
 
     /**
-     * Overwrites superagent's fake promise support and adds the generated cache key
-     * Only applies if Request.prototype.promise is not set
-     * Fixes this isse: https://github.com/jpodwys/superagent-cache/issues/38
+     * An alias for the .end function
      */
-    if(!Request.prototype.promise){
-      Request.prototype.then = function(fulfill, reject){
-        return this.end(function (err, response, key) {
-          err ? reject(err) : fulfill(response, key);
-        });
-      }
-    }
-
-    /**
-     * An alias for the .end function because I use ._end and .end for other things
-     */
-    Request.prototype.execute = Request.prototype.end;
+    Request.prototype._superagentCache_execute = Request.prototype.end;
 
     /**
      * Wraps the .end function so that .resetProps gets called--callable so that no caching logic takes place
      */
-    Request.prototype._end = function(cb){
+    Request.prototype._superagenCache_originalEnd = function(cb){
       props = utils.resetProps(superagent.defaults);
-      this.execute(cb);
+      this._superagentCache_execute(cb);
     }
 
     /**
@@ -165,7 +152,7 @@ module.exports = function(agent, cache, defaults){
                     return superagent.pendingRequests[key].push(cb);
                   }
                 }
-                _this._end(function (err, response){
+                _this._superagenCache_originalEnd(function (err, response){
                   if(err){
                     utils.handlePendingRequests(curProps, superagent, key, err, response);
                     return utils.callbackExecutor(cb, err, response, key);
@@ -205,7 +192,7 @@ module.exports = function(agent, cache, defaults){
           });
         }
         else{
-          this._end(function (err, response){
+          this._superagenCache_originalEnd(function (err, response){
             if(err){
               return utils.callbackExecutor(cb, err, response, key);
             }
@@ -220,7 +207,7 @@ module.exports = function(agent, cache, defaults){
         }
       }
       else{
-        this._end(function (err, response){
+        this._superagenCache_originalEnd(function (err, response){
           return utils.callbackExecutor(cb, err, response, undefined);
         });
       }
