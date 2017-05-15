@@ -55,11 +55,11 @@ app.get('/false', function(req, res){
 });
 
 app.get('/params', function(req, res){
-  res.send(200, {pruneParams: req.query.pruneParams, otherParams: req.query.otherParams});
+  res.send(200, {pruneQuery: req.query.pruneQuery, otherParams: req.query.otherParams});
 });
 
 app.get('/options', function(req, res){
-  res.send(200, {pruneOptions: req.get('pruneOptions'), otherOptions: req.get('otherOptions')});
+  res.send(200, {pruneHeader: req.get('pruneHeader'), otherOptions: req.get('otherOptions')});
 });
 
 app.get('/redirect', function(req, res){
@@ -130,10 +130,10 @@ describe('superagentCache', function(){
       );
     });
 
-    it('.get() ._end() should bypass all caching logic', function (done) {
+    it('.get() ._superagenCache_originalEnd() should bypass all caching logic', function (done) {
       superagent
         .get('localhost:3000/one')
-        ._end(function (err, response, key){
+        ._superagenCache_originalEnd(function (err, response, key){
           expect(typeof key).toBe('undefined');
           expect(response.body.key).toBe('one');
           checkBrowserStorage(key, false);
