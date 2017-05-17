@@ -158,7 +158,7 @@ All params here are optional. If the `superagent` param is empty or falsy, then 
 
 #### Arguments
 
-* (optional) superagent: an instance of superagent
+* superagent: an instance of superagent
 * (optional) cache: a pre-instantiated cache module that matches the `cache-service` API or a `cacheModuleConfig` object to be used with superagent-cache's bundled instance of `cacheModule`
 * (optional) defaults: an object that allows you to set defaults to be applied to all queries
 
