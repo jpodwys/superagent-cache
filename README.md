@@ -156,9 +156,9 @@ A super-light in-memory cache for cache-service or standalone use. (This module 
 
 # API
 
-## require('superagent-cache')([superagent, cache, defaults])
+## require('superagent-cache')(superagent, [cache, defaults])
 
-All params here are optional. If the `superagent` param is empty or falsy, then the require statement will return a brand new, patched instance of superagent.
+`superagent` is required, but `cache` and `defaults` are optional.
 
 #### Arguments
 
