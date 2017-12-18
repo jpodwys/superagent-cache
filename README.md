@@ -43,6 +43,13 @@ superagent
   }
 );
 ```
+If you are using `import` syntax, setup is as follows: 
+```javascript
+import superagent from 'superagent';
+import superagentCache from 'superagent-cache';
+
+superagentCache(superagent);
+```
 Enjoy!
 
 # Install
