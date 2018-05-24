@@ -130,10 +130,10 @@ describe('superagentCache', function(){
       );
     });
 
-    it('.get() ._superagenCache_originalEnd() should bypass all caching logic', function (done) {
+    it('.get() ._superagentCache_originalEnd() should bypass all caching logic', function (done) {
       superagent
         .get('localhost:3000/one')
-        ._superagenCache_originalEnd(function (err, response, key){
+        ._superagentCache_originalEnd(function (err, response, key){
           expect(typeof key).toBe('undefined');
           expect(response.body.key).toBe('one');
           checkBrowserStorage(key, false);
