@@ -110,9 +110,9 @@ function checkBrowserStorage(key, value){
 
 describe('superagentCache', function(){
 
-  beforeEach(function(){
-    superagent.cache.flush();
-  });
+  // beforeEach(function(){
+  //   superagent.cache.flush();
+  // });
 
   describe('caching tests', function () {
 

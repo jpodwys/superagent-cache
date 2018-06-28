@@ -7,7 +7,7 @@
     "cache-service-cache-module": "2.x"
   },
   "devDependencies": {
-    "superagent": "3.6.2",
+    "superagent": "3.8.3",
     "es6-promise": "3.0.2",
     "expect": "1.6.0",
     "express": "4.x",
