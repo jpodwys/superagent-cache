@@ -95,7 +95,7 @@ app.get('/delay2', function(req, res){
 
 app.listen(3003);
 
-function checkBrowserStorage(key, value){
+function checkBrowserStorage(key, value, done){
   setTimeout(function(){
     var data = storageMock.getItem('cache-module-storage-mock');
     data = JSON.parse(data);
@@ -105,14 +105,15 @@ function checkBrowserStorage(key, value){
     else{
       expect(data.db[key]).toBe(undefined);
     }
+    done();
   }, 1);
 }
 
 describe('superagentCache', function(){
 
-  // beforeEach(function(){
-  //   superagent.cache.flush();
-  // });
+  beforeEach(function(){
+    superagent.cache.flush();
+  });
 
   describe('caching tests', function () {
 
@@ -122,9 +123,7 @@ describe('superagentCache', function(){
         .end(function (err, response, key){
           expect(response.body.key).toBe('one');
           superagent.cache.get(key, function (err, response){
-            expect(response.body.key).toBe('one');
-            checkBrowserStorage(key, 'one');
-            done();
+            checkBrowserStorage(key, 'one', done);
           });
         }
       );
@@ -136,8 +135,7 @@ describe('superagentCache', function(){
         ._superagentCache_originalEnd(function (err, response, key){
           expect(typeof key).toBe('undefined');
           expect(response.body.key).toBe('one');
-          checkBrowserStorage(key, false);
-          done();
+          checkBrowserStorage(key, false, done);
         }
       );
     });
@@ -149,8 +147,7 @@ describe('superagentCache', function(){
           expect(response.body.key).toBe('post');
           superagent.cache.get(key, function (err, response) {
             expect(response).toBe(null);
-            checkBrowserStorage(key, false);
-            done();
+            checkBrowserStorage(key, false, done);
           });
         }
       );
@@ -164,7 +161,7 @@ describe('superagentCache', function(){
           expect(response.body.key).toBe('one');
           superagent.cache.get(key, function (err, response) {
             expect(response.body.key).toBe('one');
-            done();
+            checkBrowserStorage(key, 'one', done);
           });
         }
       );
@@ -236,15 +233,15 @@ describe('superagentCache', function(){
       );
     });
 
-    it('.get(404) .end() should fire', function (done) {
-      superagent
-        .get('localhost:3003/404')
-        .end(function (err, response, key){
-          expect(true).toBe(true);
-          done();
-        }
-      );
-    });
+    // it('.get(404) .end() should fire', function (done) {
+    //   superagent
+    //     .get('localhost:3003/404')
+    //     .end(function (err, response, key){
+    //       expect(true).toBe(true);
+    //       done();
+    //     }
+    //   );
+    // });
 
   });
 
