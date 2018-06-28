@@ -74,7 +74,7 @@ app.get('/delay2', function(req, res){
   }, 250);
 });
 
-app.listen(3000);
+app.listen(3005);
 
 describe('superagentCache', function(){
 
@@ -86,12 +86,12 @@ describe('superagentCache', function(){
 
   it('.forceUpdate() should prevent the module from hitting the cache', function (done) {
     superagent
-      .get('localhost:3000/count')
+      .get('localhost:3005/count')
       .end(function (err, response, key){
         superagent.cache.get(key, function (err, response){
           expect(response.body.count).toBe(1);
           superagent
-            .get('localhost:3000/count')
+            .get('localhost:3005/count')
             .forceUpdate()
             .end(function (err, response, key){
               expect(response.body.count).toBe(2);

@@ -78,7 +78,7 @@ app.get('/delay2', function(req, res){
   }, 250);
 });
 
-app.listen(3000);
+app.listen(3004);
 
 describe('superagentCache', function(){
 
@@ -91,7 +91,7 @@ describe('superagentCache', function(){
     it('Should be able to configure global settings: doQuery', function (done) {
       superagent.defaults = {doQuery: false, expiration: 1};
       superagent
-        .get('localhost:3000/one')
+        .get('localhost:3004/one')
         .end(function (err, response, key){
           superagent.cache.get(key, function (err, response) {
             expect(response).toBe(null);
@@ -104,7 +104,7 @@ describe('superagentCache', function(){
     it('Global settings should be locally overwritten by chainables: doQuery', function (done) {
       superagent.defaults = {doQuery: false, expiration: 1};
       superagent
-        .get('localhost:3000/one')
+        .get('localhost:3004/one')
         .doQuery(true)
         .end(function (err, response, key){
           superagent.cache.get(key, function (err, response) {
@@ -119,7 +119,7 @@ describe('superagentCache', function(){
     it('Should be able to configure global settings: expiration', function (done) {
       superagent.defaults = {doQuery: false, expiration: 1};
       superagent
-        .get('localhost:3000/one')
+        .get('localhost:3004/one')
         .doQuery(true)
         .end(function (err, response, key){
           superagent.cache.get(key, function (err, response) {
@@ -127,7 +127,7 @@ describe('superagentCache', function(){
             expect(response.body.key).toBe('one');
             setTimeout(function(){
               superagent
-                .get('localhost:3000/one')
+                .get('localhost:3004/one')
                 .end(function (err, response, key){
                   superagent.cache.get(key, function (err, response) {
                     expect(response).toBe(null);
@@ -144,7 +144,7 @@ describe('superagentCache', function(){
     it('Global settings should be locally overwritten by chainables: expiration', function (done) {
       superagent.defaults = {doQuery: false, expiration: 1};
       superagent
-        .get('localhost:3000/one')
+        .get('localhost:3004/one')
         .doQuery(true)
         .expiration(2)
         .end(function (err, response, key){
@@ -153,7 +153,7 @@ describe('superagentCache', function(){
             expect(response.body.key).toBe('one');
             setTimeout(function(){
               superagent
-                .get('localhost:3000/one')
+                .get('localhost:3004/one')
                 .end(function (err, response, key){
                   superagent.cache.get(key, function (err, response) {
                     expect(response).toNotBe(null);

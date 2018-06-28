@@ -93,7 +93,7 @@ app.get('/delay2', function(req, res){
   }, 250);
 });
 
-app.listen(3000);
+app.listen(3003);
 
 function checkBrowserStorage(key, value){
   setTimeout(function(){
@@ -118,7 +118,7 @@ describe('superagentCache', function(){
 
     it('.get() .end() should retrieve and cache response', function (done) {
       superagent
-        .get('localhost:3000/one')
+        .get('localhost:3003/one')
         .end(function (err, response, key){
           expect(response.body.key).toBe('one');
           superagent.cache.get(key, function (err, response){
@@ -132,7 +132,7 @@ describe('superagentCache', function(){
 
     it('.get() ._superagentCache_originalEnd() should bypass all caching logic', function (done) {
       superagent
-        .get('localhost:3000/one')
+        .get('localhost:3003/one')
         ._superagentCache_originalEnd(function (err, response, key){
           expect(typeof key).toBe('undefined');
           expect(response.body.key).toBe('one');
@@ -144,7 +144,7 @@ describe('superagentCache', function(){
 
     it('.post() .end() should bypass all caching logic', function (done) {
       superagent
-        .post('localhost:3000/one')
+        .post('localhost:3003/one')
         .end(function (err, response, key){
           expect(response.body.key).toBe('post');
           superagent.cache.get(key, function (err, response) {
@@ -158,9 +158,9 @@ describe('superagentCache', function(){
 
     it('.get(redirect) .end() should cache the result of the redirect using the original request\'s key', function (done) {
       superagent
-        .get('http://localhost:3000/redirect')
+        .get('http://localhost:3003/redirect')
         .end(function (err, response, key){
-          expect(key).toBe('{"method":"GET","uri":"http://localhost:3000/redirect","params":null,"options":{}}');
+          expect(key).toBe('{"method":"GET","uri":"http://localhost:3003/redirect","params":null,"options":{}}');
           expect(response.body.key).toBe('one');
           superagent.cache.get(key, function (err, response) {
             expect(response.body.key).toBe('one');
@@ -172,13 +172,13 @@ describe('superagentCache', function(){
 
     it('.get() then .put() should invalidate cache', function (done) {
       superagent
-        .get('localhost:3000/one')
+        .get('localhost:3003/one')
         .end(function (err, response, key){
           expect(response.body.key).toBe('one');
           superagent.cache.get(key, function (err, response) {
             expect(response.body.key).toBe('one');
             superagent
-              .put('localhost:3000/one')
+              .put('localhost:3003/one')
               .end(function (err, response, key){
                 expect(response.body.key).toBe('put');
                 superagent.cache.get(key, function (err, response) {
@@ -194,13 +194,13 @@ describe('superagentCache', function(){
 
     it('.get() then .patch() should invalidate cache', function (done) {
       superagent
-        .get('localhost:3000/one')
+        .get('localhost:3003/one')
         .end(function (err, response, key){
           expect(response.body.key).toBe('one');
           superagent.cache.get(key, function (err, response) {
             expect(response.body.key).toBe('one');
             superagent
-              .patch('localhost:3000/one')
+              .patch('localhost:3003/one')
               .end(function (err, response, key){
                 expect(response.body.key).toBe('patch');
                 superagent.cache.get(key, function (err, response) {
@@ -216,13 +216,13 @@ describe('superagentCache', function(){
 
     it('.get() then .del() should invalidate cache', function (done) {
       superagent
-        .get('localhost:3000/one')
+        .get('localhost:3003/one')
         .end(function (err, response, key){
           expect(response.body.key).toBe('one');
           superagent.cache.get(key, function (err, response){
             expect(response.body.key).toBe('one');
             superagent
-              .del('localhost:3000/one')
+              .del('localhost:3003/one')
               .end(function (err, response, key){
                 expect(response.body.key).toBe('delete');
                 superagent.cache.get(key, function (err, response){
@@ -238,7 +238,7 @@ describe('superagentCache', function(){
 
     it('.get(404) .end() should fire', function (done) {
       superagent
-        .get('localhost:3000/404')
+        .get('localhost:3003/404')
         .end(function (err, response, key){
           expect(true).toBe(true);
           done();
@@ -276,20 +276,20 @@ describe('superagentCache', function(){
 
     function runNoRedirects(input) {
       return superagentRunPromise(
-          'localhost:3000/one',
+          'localhost:3003/one',
           []);
     }
 
     var runWithRedirectsList = [
       function(input) {
         return superagentRunPromise(
-          'http://localhost:3000/redirect',
-          ['http://localhost:3000/one']);
+          'http://localhost:3003/redirect',
+          ['http://localhost:3003/one']);
       },
       function(input) {
         return superagentRunPromise(
-          'http://localhost:3000/redirect',
-          ['http://localhost:3000/one']);
+          'http://localhost:3003/redirect',
+          ['http://localhost:3003/one']);
       }
     ];
 

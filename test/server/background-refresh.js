@@ -77,7 +77,7 @@ app.get('/delay2', function(req, res){
   }, 250);
 });
 
-app.listen(3000);
+app.listen(3002);
 
 describe('superagentCache', function(){
 
@@ -89,7 +89,7 @@ describe('superagentCache', function(){
 
     it('.get() .expiration() .end() background refresh should not work if the chainable is not used', function (done) {
       superagent
-        .get('localhost:3000/one')
+        .get('localhost:3002/one')
         .expiration(1)
         .end(function (err, response, key){
           expect(typeof key).toBe('string');
@@ -106,7 +106,7 @@ describe('superagentCache', function(){
 
     it('.get() .expiration() .backgroundRefresh(true) .end() background refresh should refresh a key shortly before expiration', function (done) {
       superagent
-        .get('localhost:3000/one')
+        .get('localhost:3002/one')
         .expiration(1)
         .backgroundRefresh(true)
         .end(function (err, response, key){
@@ -124,7 +124,7 @@ describe('superagentCache', function(){
 
     it('.get() .query(string&string) .end() background refresh should not work if the chainable is not used', function (done) {
       superagent
-        .get('localhost:3000/params')
+        .get('localhost:3002/params')
         .query('pruneQuery=true&otherParams=false')
         .pruneQuery(['pruneQuery'])
         .end(function (err, response, key){
@@ -144,7 +144,7 @@ describe('superagentCache', function(){
 
     it('.get() .query(string&string) .backgroundRefresh(true) .end() background refresh should refresh a key shortly before expiration', function (done) {
       superagent
-        .get('localhost:3000/params')
+        .get('localhost:3002/params')
         .query('pruneQuery=true&otherParams=false')
         .pruneQuery(['pruneQuery'])
         .backgroundRefresh(true)
@@ -172,7 +172,7 @@ describe('superagentCache', function(){
       }
 
       superagent
-        .get('localhost:3000/one')
+        .get('localhost:3002/one')
         .expiration(1)
         .backgroundRefresh(refresh)
         .end(function (err, response, key){
@@ -194,7 +194,7 @@ describe('superagentCache', function(){
       }
 
       superagent
-        .get('localhost:3000/one')
+        .get('localhost:3002/one')
         .expiration(1)
         .backgroundRefresh(refresh)
         .end(function (err, response, key){

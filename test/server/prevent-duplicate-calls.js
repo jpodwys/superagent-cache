@@ -70,7 +70,7 @@ app.get('/delay2', function(req, res){
   }, 250);
 });
 
-app.listen(3000);
+app.listen(3006);
 
 describe('superagentCache', function(){
 
@@ -89,7 +89,7 @@ describe('superagentCache', function(){
         }
       }
       superagent
-        .get('localhost:3000/delay')
+        .get('localhost:3006/delay')
         .preventDuplicateCalls()
         .end(function (err, response, key){
           expect(response.body.delayCount).toBe(1);
@@ -97,7 +97,7 @@ describe('superagentCache', function(){
         }
       );
       superagent
-        .get('localhost:3000/delay')
+        .get('localhost:3006/delay')
         .preventDuplicateCalls()
         .end(function (err, response, key){
           expect(response.body.delayCount).toBe(1);
@@ -105,7 +105,7 @@ describe('superagentCache', function(){
         }
       );
       superagent
-        .get('localhost:3000/delay')
+        .get('localhost:3006/delay')
         .preventDuplicateCalls()
         .end(function (err, response, key){
           expect(response.body.delayCount).toBe(1);
@@ -123,19 +123,19 @@ describe('superagentCache', function(){
         }
       }
       superagent
-        .get('localhost:3000/delay2')
+        .get('localhost:3006/delay2')
         .preventDuplicateCalls()
         .end(function (err, response, key){
           expect(response.body.delayCount).toBe(1);
           finished();
           superagent
-            .get('localhost:3000/delay2')
+            .get('localhost:3006/delay2')
             .preventDuplicateCalls()
             .end(function (err, response, key){
               expect(response.body.delayCount).toBe(2);
               finished();
               superagent
-                .get('localhost:3000/delay2')
+                .get('localhost:3006/delay2')
                 .preventDuplicateCalls()
                 .end(function (err, response, key){
                   expect(response.body.delayCount).toBe(3);
