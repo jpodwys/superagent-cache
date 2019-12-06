@@ -43,7 +43,7 @@ superagent
   }
 );
 ```
-If you are using `import` syntax, setup is as follows: 
+If you are using `import` syntax, setup is as follows:
 ```javascript
 import superagent from 'superagent';
 import superagentCache from 'superagent-cache';
@@ -209,15 +209,15 @@ superagent
 );
 ```
 
-## .prune(callback (response))
-
-> Caution: if you use this function, `supergent-cache` [will not gut](#what-exactly-gets-cached) the `response` object for you. Be sure that the result of your `.prune()` callback function will never be circular and is not larger than it needs to be.
+> Caution: if you use this function, `supergent-cache` [will not automatically gut](#what-exactly-gets-cached) the `response` object for you (although you can use the `gutResponse` param to do so manually--more on that below). Be sure that the result of your `.prune()` callback function will never be circular and is not larger than it needs to be.
 
 If you need to dig several layers into superagent's response, you can do so by passing a function to `.prune()`. Your prune function will receive superagent's response and should return a truthy value or `null`. The benefit of using this function is that you can cache only what you need.
 
+Your prune function will optionally receive `gutResponse` as its second param. This is the method that `superagent-cache` calls internally to simplify responses. If, based on some processing within the function you pass to `.prune`, you decide that no custom return value is necessary, or you would like to take advantage of the default behavior plus some of your own, you can call `gutResponse(response)` to get the value that `superagent-cache` would have returned without a call to `.prune`.
+
 #### Arguments
 
-* callback: a function that accepts superagent's response object and returns a truthy value or null
+* callback: a function that accepts superagent's response object and the gutResponse function and returns a truthy value or null
 
 #### Example
 
@@ -228,6 +228,26 @@ var prune = function(r){
 
 //response will now be replaced with r.body.user or null
 //and only r.body.user will be cached rather than the entire superagent response
+superagent
+  .get(uri)
+  .prune(prune)
+  .end(function (error, response){
+    // handle response
+  }
+);
+```
+
+#### Example Using `gutResponse`
+
+```javascript
+var prune = function(r, gutResponse){
+  var output = gutResponse(r);
+  output.customValue = getCustomValue();
+  return output;
+}
+
+//response will now be superagent-cache-plugin's default output plus `customValue`
+//all of which will be cached rather than the entire superagent response
 superagent
   .get(uri)
   .prune(prune)

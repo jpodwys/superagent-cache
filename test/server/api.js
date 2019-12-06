@@ -4,6 +4,7 @@ delete superagent;
 var expect = require('expect');
 var express = require('express');
 var superagent = require('superagent');
+var utils = require('../../utils');
 var cModule = require('cache-service-cache-module');
 require('../../superagentCache')(superagent, {backgroundRefreshInterval: 500}, null);
 //To make sure requiring a second time won't break anything
@@ -106,6 +107,21 @@ describe('superagentCache', function(){
         .prune(prune)
         .end(function (err, response, key){
           expect(response).toBe('one');
+          done();
+        }
+      );
+    });
+
+    it('.get() .prune(f(r, g)) .end() should expose the internal gutResponse function', function (done) {
+      var prune = function(r, gut){
+        expect(gut).toBe(utils.gutResponse);
+        return gut(r);
+      }
+      superagent
+        .get('localhost:3001/one')
+        .prune(prune)
+        .end(function (err, response, key){
+          expect(response.body.key).toBe('one');
           done();
         }
       );
