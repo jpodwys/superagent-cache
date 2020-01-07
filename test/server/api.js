@@ -77,7 +77,7 @@ app.get('/delay2', function(req, res){
   }, 250);
 });
 
-app.listen(3001);
+app.listen(3007);
 
 describe('superagentCache', function(){
 
@@ -89,7 +89,7 @@ describe('superagentCache', function(){
 
     it('.end() should not require the \'err\' callback param', function (done) {
       superagent
-        .get('localhost:3001/one')
+        .get('localhost:3007/one')
         .end(function (response){
           expect(response.body.key).toBe('one');
           done();
@@ -102,7 +102,7 @@ describe('superagentCache', function(){
         return (r && r.ok && r.body) ? r.body.key : null;
       }
       superagent
-        .get('localhost:3001/one')
+        .get('localhost:3007/one')
         .prune(prune)
         .end(function (err, response, key){
           expect(response).toBe('one');
@@ -117,7 +117,7 @@ describe('superagentCache', function(){
         return gut(r);
       }
       superagent
-        .get('localhost:3001/one')
+        .get('localhost:3007/one')
         .prune(prune)
         .end(function (err, response, key){
           expect(response.body.key).toBe('one');
@@ -128,7 +128,7 @@ describe('superagentCache', function(){
 
     it('.get() .responseProp() .end() should get responseProp before caching', function (done) {
       superagent
-        .get('localhost:3001/one')
+        .get('localhost:3007/one')
         .responseProp('body')
         .end(function (err, response, key){
           expect(response.key).toBe('one');
@@ -139,7 +139,7 @@ describe('superagentCache', function(){
 
     it('.get() .expiration() .end() should override all caches\' defaultExpirations', function (done) {
       superagent
-        .get('localhost:3001/one')
+        .get('localhost:3007/one')
         .expiration(0.001)
         .end(function (err, response, key){
           expect(response.body.key).toBe('one');
@@ -161,7 +161,7 @@ describe('superagentCache', function(){
         return (r && r.ok && r.body) ? r.body.key : null;
       }
       superagent
-        .get('localhost:3001/false')
+        .get('localhost:3007/false')
         .prune(prune)
         .end(function (err, response, key){
           expect(response).toBe(false);
@@ -178,7 +178,7 @@ describe('superagentCache', function(){
         return (r && r.ok && r.body) ? r.body.key : null;
       }
       superagent
-        .get('localhost:3001/false')
+        .get('localhost:3007/false')
         .prune(prune)
         .cacheWhenEmpty(false)
         .end(function (err, response, key){
@@ -193,7 +193,7 @@ describe('superagentCache', function(){
 
     it('.get() .query(object) .pruneQuery() .end() should query with all params but create a key without the indicated params', function (done) {
       superagent
-        .get('localhost:3001/params')
+        .get('localhost:3007/params')
         .query({pruneQuery: true, otherParams: false})
         .pruneQuery(['pruneQuery'])
         .end(function (err, response, key){
@@ -208,7 +208,7 @@ describe('superagentCache', function(){
 
     it('.get() .query(string&string) .pruneQuery() .end() should query with all params but create a key without the indicated params', function (done) {
       superagent
-        .get('localhost:3001/params')
+        .get('localhost:3007/params')
         .query('pruneQuery=true&otherParams=false')
         .pruneQuery(['pruneQuery'])
         .end(function (err, response, key){
@@ -223,7 +223,7 @@ describe('superagentCache', function(){
 
     it('.get() .query(string) .query(string) .pruneQuery() .end() should query with all params but create a key without the indicated params', function (done) {
       superagent
-        .get('localhost:3001/params')
+        .get('localhost:3007/params')
         .query('pruneQuery=true')
         .query('otherParams=false')
         .pruneQuery(['pruneQuery'])
@@ -239,7 +239,7 @@ describe('superagentCache', function(){
 
     it('.get() .pruneHeader() .end() should query with all options but create a key without the indicated options', function (done) {
       superagent
-        .get('localhost:3001/options')
+        .get('localhost:3007/options')
         .set({pruneHeader: true, otherOptions: false})
         .pruneHeader(['pruneHeader'])
         .end(function (err, response, key){
@@ -261,7 +261,7 @@ describe('superagentCache', function(){
 
     it('.get() .doQuery(false) .end() should not perform a query', function (done) {
       superagent
-        .get('localhost:3001/one')
+        .get('localhost:3007/one')
         .doQuery(false)
         .end(function (err, response, key){
           expect(response).toBe(null);
@@ -272,7 +272,7 @@ describe('superagentCache', function(){
 
     it('.end() should not set \'err\' callback param on error', function (done) {
       superagent
-        .get('localhost:3001/invalid')
+        .get('localhost:3007/invalid')
         .end(function (err, response){
           expect(err).toExist();
           done();
@@ -289,14 +289,14 @@ describe('superagentCache', function(){
       }
 
       superagent
-        .get('localhost:3001/four')
+        .get('localhost:3007/four')
         .cacheWhenEmpty(false)
         .prune(prune)
         .end(function (err, response, key) {
           superagent.cache.get(key, function (err, response){
             expect(response).toBe(null);
             superagent
-              .get('localhost:3001/one')
+              .get('localhost:3007/one')
               .cacheWhenEmpty(false)
               .prune(prune)
               .end(function (err, response, key) {
