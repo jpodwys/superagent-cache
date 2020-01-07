@@ -5,7 +5,6 @@ var expect = require('expect');
 var express = require('express');
 var superagent = require('superagent');
 var utils = require('../../utils');
-var cModule = require('cache-service-cache-module');
 require('../../superagentCache')(superagent, {backgroundRefreshInterval: 500}, null);
 //To make sure requiring a second time won't break anything
 require('../../superagentCache')(superagent, {backgroundRefreshInterval: 500}, null);
