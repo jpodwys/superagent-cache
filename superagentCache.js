@@ -160,7 +160,7 @@ module.exports = function(superagent, cache, defaults){
                   else if(!err && response){
                     response.redirects = _this.scRedirectsList;
                     if(curProps.prune){
-                      response = curProps.prune(response);
+                      response = curProps.prune(response, utils.gutResponse);
                     }
                     else if(curProps.responseProp){
                       response = response[curProps.responseProp] || null;
