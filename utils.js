@@ -62,7 +62,7 @@ module.exports = {
   },
 
   /**
-   * Add an array of key-value pairs to an object
+   * Add an array of key-value pairs to an object (mutation by reference)
    * @param {object} obj
    * @param {array} arr
    */
