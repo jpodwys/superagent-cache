@@ -6,10 +6,11 @@ describe('superagentCache', function() {
   describe('utility tests', function() {
 
     it('addKvArrayToObj should add parsed kvArrays to an object', function() {
-      var test = {};
+      var test = {"param1[]": 'existing', existing: 'should not change'};
       var kvArray = ['param1[]=foo', 'param2=bar', 'param1[]=baz', 'param3=hello', 'param3=world'];
       expect(utils.addKvArrayToObj(test, kvArray)).toEqual({
-        "param1[]": ['foo', 'baz'],
+        existing: 'should not change',
+        "param1[]": ['existing', 'foo', 'baz'],
         param2: 'bar',
         param3: ['hello', 'world']
       })
