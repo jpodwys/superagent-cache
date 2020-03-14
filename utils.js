@@ -62,6 +62,25 @@ module.exports = {
   },
 
   /**
+   * Add an array of key-value pairs to an object (mutation by reference)
+   * @param {object} obj
+   * @param {array} arr
+   */
+  addKvArrayToObj: function(obj, arr){
+    for(var i = 0; i < arr.length; i++){
+      var kvString = arr[i].split(`=`);
+      if (Array.isArray(obj[kvString[0]])) {
+        obj[kvString[0]].push(kvString[1])
+      } else if (obj[kvString[0]]) {
+        obj[kvString[0]] = [obj[kvString[0]], kvString[1]];
+      } else {
+        obj[kvString[0]] = kvString[1];
+      }
+    }
+    return obj;
+  },
+
+  /**
    * Convert an array to an object
    * @param {array} arr
    */
@@ -71,10 +90,7 @@ module.exports = {
       for(var i = 0; i < arr.length; i++){
         var str = arr[i];
         var kvArray = str.split('&');
-        for(var j = 0; j < kvArray.length; j++){
-          var kvString = kvArray[j].split('=');
-          obj[kvString[0]] = kvString[1];
-        }
+        obj = this.addKvArrayToObj(obj, kvArray);
       }
       return obj;
     }
@@ -87,17 +103,12 @@ module.exports = {
    */
   stringToObj: function(str){
     if(str){
-      var obj = {};
       if(~str.indexOf('?')){
         var strs = str.split('?');
         str = strs[1];
       }
       var kvArray = str.split('&');
-      for(var i = 0; i < kvArray.length; i++){
-        var kvString = kvArray[i].split('=');
-        obj[kvString[0]] = kvString[1];
-      }
-      return obj;
+      return this.addKvArrayToObj({}, kvArray);
     }
     return null;
   },
